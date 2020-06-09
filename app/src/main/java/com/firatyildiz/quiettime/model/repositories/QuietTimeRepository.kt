@@ -8,11 +8,19 @@ class QuietTimeRepository(private val quietTimeDao: QuietTimeDao) {
 
     val allQuietTimes: LiveData<List<QuietTime>> = quietTimeDao.getAllQuietTimes()
 
-    fun insert(quietTime: QuietTime) {
+    fun insertQuietTime(quietTime: QuietTime) {
         quietTimeDao.insertQuietTime(quietTime)
     }
 
-    fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime>? {
+    fun updateQuietTime(quietTime: QuietTime) {
+        quietTimeDao.updateQuietTime(quietTime)
+    }
+
+    fun deleteQuietTime(quietTime: QuietTime) {
+        quietTimeDao.deleteQuietTime(quietTime)
+    }
+
+    fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
         return quietTimeDao.getCollidingQuietTimes(days, startTime, endTime)
     }
 }

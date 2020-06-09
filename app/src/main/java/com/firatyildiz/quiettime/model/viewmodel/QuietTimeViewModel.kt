@@ -22,10 +22,10 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun insertQuietTime(quietTime: QuietTime) {
-        repository.insert(quietTime)
+        repository.insertQuietTime(quietTime)
     }
 
-    fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime>? {
+    fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
         return getCollidingQuietTimes(days, startTime, endTime)
     }
 }
