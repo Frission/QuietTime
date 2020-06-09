@@ -9,6 +9,7 @@
     tools:context=".app.MainFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/quiet_time_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
