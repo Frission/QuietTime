@@ -4,8 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.firatyildiz.quiettime.model.QuietTimeConstants
+import java.io.Serializable
 
 /**
+ * @author Fırat Yıldız
+ *
  * Start time and end time are stored as minutes that have passed since midnight,
  * ex. 240 would be 04:00
  *
@@ -20,7 +23,7 @@ data class QuietTime(
     @ColumnInfo(name = QuietTimeConstants.DAYS_COLUMN) var days: Int,
     @ColumnInfo(name = QuietTimeConstants.START_TIME_COLUMN) var startTime: Int,
     @ColumnInfo(name = QuietTimeConstants.END_TIME_COLUMN) var endTime: Int
-) {
+) : Serializable {
     @ColumnInfo(name = QuietTimeConstants.ID_COLUMN)
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

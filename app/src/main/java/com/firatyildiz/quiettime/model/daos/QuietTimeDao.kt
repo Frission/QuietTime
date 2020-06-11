@@ -6,6 +6,9 @@ import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import org.jetbrains.annotations.TestOnly
 
+/**
+ * @author Fırat Yıldız
+ */
 @Dao
 interface QuietTimeDao {
 

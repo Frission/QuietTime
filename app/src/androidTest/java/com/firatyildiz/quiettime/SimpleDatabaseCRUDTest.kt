@@ -15,6 +15,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 
+/**
+ * @author Fırat Yıldız
+ */
 @RunWith(AndroidJUnit4::class)
 class SimpleDatabaseCRUDTest {
     private lateinit var quietTimeDao: QuietTimeDao

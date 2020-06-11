@@ -1,5 +1,8 @@
 package com.firatyildiz.quiettime.model
 
+/**
+ * @author Fırat Yıldız
+ */
 object QuietTimeConstants {
     const val DATABASE_NAME = "quiet_time"
     const val TABLE_NAME = "QuietTime"

@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import com.firatyildiz.quiettime.model.daos.QuietTimeDao
 import com.firatyildiz.quiettime.model.entities.QuietTime
 
+/**
+ * @author Fırat Yıldız
+ */
 class QuietTimeRepository(private val quietTimeDao: QuietTimeDao) {
 
     val allQuietTimes: LiveData<List<QuietTime>> = quietTimeDao.getAllQuietTimes()

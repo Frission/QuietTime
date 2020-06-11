@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -14,6 +14,8 @@
         <item name="colorAccent">@color/light_colorAccent</item>
         <item name="background">@color/light_background</item>
         <item name="colorCardViewLine">@color/light_separator_line</item>
+        <item name="colorIcon">@color/light_icon</item>
+        <item name="colorShadowOverBackground">@color/light_shadowOverBackground</item>
     </style>
 
 
@@ -24,8 +26,18 @@
         <item name="android:gravity">center_horizontal|bottom</item>
     </style>
 
+    <style name="LightTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="LightTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="LightTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <!--  Custom attributes  -->
     <attr name="colorIcon" format="reference" />
     <attr name="colorCardViewLine" format="reference" />
+    <attr name="colorShadowOverBackground" format="reference" />
 
 </resources>

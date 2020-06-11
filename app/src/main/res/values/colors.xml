@@ -7,8 +7,10 @@
     <!--  Light theme colors  -->
     <color name="light_colorPrimary">#FF5722</color>
     <color name="light_colorPrimaryDark">#BF360C</color>
-    <color name="light_colorAccent">#424242</color>
+    <color name="light_colorAccent">#FFA726</color>
     <color name="light_background">#FAFAFA</color>
+    <color name="light_shadowOverBackground">#EDEDED</color>
     <color name="light_textPrimary">#010101</color>
     <color name="light_separator_line">#C1C1C1</color>
+    <color name="light_icon">#FAFAFA</color>
 </resources>

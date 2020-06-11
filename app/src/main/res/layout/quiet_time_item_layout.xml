@@ -51,7 +51,7 @@
         tools:text="09:00 - 17:30" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/qt_item_edit"
+        android:id="@+id/qt_item_edit_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -65,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/qt_item_days">
 
         <LinearLayout
-            android:id="@+id/qt_item_edit_days"
+            android:id="@+id/qt_item_edit_days_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -147,7 +147,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/qt_item_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -156,16 +156,16 @@
             android:background="?attr/background"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/edit_times"
+            android:text="@string/qt_item_edit_times"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button2"
+            app:layout_constraintEnd_toStartOf="@+id/qt_item_save_button"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days" />
+            app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days_list" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/qt_item_save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -176,8 +176,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/button"
-            app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days" />
+            app:layout_constraintStart_toEndOf="@+id/qt_item_edit_button"
+            app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

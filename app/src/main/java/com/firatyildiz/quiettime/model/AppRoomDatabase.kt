@@ -7,6 +7,9 @@ import androidx.room.RoomDatabase
 import com.firatyildiz.quiettime.model.daos.QuietTimeDao
 import com.firatyildiz.quiettime.model.entities.QuietTime
 
+/**
+ * @author Fırat Yıldız
+ */
 @Database(entities = [QuietTime::class], version = 1)
 abstract class AppRoomDatabase : RoomDatabase() {
 

@@ -3,6 +3,9 @@ package com.firatyildiz.quiettime.helpers
 import androidx.recyclerview.widget.DiffUtil
 import com.firatyildiz.quiettime.model.entities.QuietTime
 
+/**
+ * @author Fırat Yıldız
+ */
 class QuietTimeDiffCallback(
     var oldQuietTimes: List<QuietTime>,
     var newQuietTimes: List<QuietTime>

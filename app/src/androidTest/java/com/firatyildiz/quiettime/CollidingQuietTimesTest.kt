@@ -13,6 +13,9 @@ import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 
+/**
+ * @author Fırat Yıldız
+ */
 class CollidingQuietTimesTest {
     private lateinit var quietTimeDao: QuietTimeDao
     private lateinit var db: AppRoomDatabase

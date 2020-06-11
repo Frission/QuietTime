@@ -7,6 +7,9 @@ import com.firatyildiz.quiettime.model.AppRoomDatabase
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.repositories.QuietTimeRepository
 
+/**
+ * @author Fırat Yıldız
+ */
 class QuietTimeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: QuietTimeRepository
@@ -21,6 +24,7 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
         allQuietTimes = repository.allQuietTimes
     }
 
+    // TODO this insert function should also create a repeating alarm
     fun insertQuietTime(quietTime: QuietTime) {
         repository.insertQuietTime(quietTime)
     }
