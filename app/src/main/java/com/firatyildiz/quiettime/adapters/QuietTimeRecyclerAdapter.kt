@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -19,7 +20,11 @@ import timber.log.Timber
 /**
  * @author Fırat Yıldız
  */
-class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>) :
+class QuietTimeRecyclerAdapter(
+    var context: Context,
+    var dayNames: List<String>,
+    var itemListener: QuietTimeItemViewClickListener
+) :
     RecyclerView.Adapter<QuietTimeRecyclerAdapter.QuietTimeViewHolder>() {
 
     var allQuietTimes: List<QuietTime>? = null
@@ -76,34 +81,37 @@ class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>)
                     )
             }
 
-            for (i in 0..6)
+            // assign listeners here
+
+            for (i in 0..6) {
                 holder.dayChoiceButtons[i].text = dayNames[i]
+                holder.dayChoiceButtons[i].setOnClickListener { itemListener.onDaySelected(i) }
+            }
 
-            holder.editTimesButton.setOnClickListener { onEditButtonClicked.onItemClicked(position) }
-            holder.saveButton.setOnClickListener { onSaveButtonClicked.onItemClicked(position) }
+            holder.editOrCloseButton.setOnClickListener {
+                itemListener.onEditButtonClicked(
+                    position,
+                    allQuietTimes!![position],
+                    holder
+                )
+            }
+            holder.saveButton.setOnClickListener { itemListener.onSaveButtonClicked() }
+            holder.editTimesButton.setOnClickListener { itemListener.onEditTimesButtonClicked() }
+            holder.deleteButton.setOnClickListener { itemListener.onDeleteButtonClicked() }
 
-            animateViewHolder(holder)
+            if (holder.expanded)
+                holder.editLayout.visibility = View.VISIBLE
+            else
+                holder.editLayout.visibility = View.GONE
+
+            //animateViewHolder(holder)
         }
     }
 
     //endregion
 
-    val onEditButtonClicked = object : OnRecyclerViewItemClicked {
-        override fun onItemClicked(position: Int) {
-            Timber.d("Item number %d was clicked", position)
-            // TODO Implement this
-        }
-    }
-
-    private val onSaveButtonClicked = object : OnRecyclerViewItemClicked {
-        override fun onItemClicked(position: Int) {
-            Timber.d("Item number %d was clicked", position)
-            // TODO Implement this
-        }
-    }
-
     private fun animateViewHolder(holder: QuietTimeViewHolder) {
-        holder.container.animation = AnimationUtils.loadAnimation(context, R.anim.anim_pop_in)
+        holder.container.animation = AnimationUtils.loadAnimation(context, R.anim.pop_in)
     }
 
     //region View Holder
@@ -114,7 +122,10 @@ class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>)
         var daysText: TextView
         var timeRangeText: TextView
         var dayChoiceButtons: List<RadioButton>
+        var editLayout: View
         var editTimesButton: Button
+        var editOrCloseButton: ImageButton
+        var deleteButton: Button
         var saveButton: Button
 
         var expanded = false
@@ -123,6 +134,7 @@ class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>)
             container = itemView.findViewById(R.id.quiet_time_card)
             titleText = itemView.findViewById(R.id.qt_item_title)
             daysText = itemView.findViewById(R.id.qt_item_days)
+            editLayout = itemView.findViewById(R.id.qt_item_edit_layout)
             timeRangeText = itemView.findViewById(R.id.qt_item_time)
             dayChoiceButtons = listOf(
                 itemView.findViewById(R.id.qt_item_edit_day1),
@@ -134,14 +146,28 @@ class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>)
                 itemView.findViewById(R.id.qt_item_edit_day7)
             )
 
-            editTimesButton = itemView.findViewById(R.id.qt_item_edit_button)
-            saveButton = itemView.findViewById(R.id.qt_item_edit_button)
+            editTimesButton = itemView.findViewById(R.id.qt_item_edit_times_button)
+            saveButton = itemView.findViewById(R.id.qt_item_edit_times_button)
+            deleteButton = itemView.findViewById(R.id.qt_item_delete_button)
+            editOrCloseButton = itemView.findViewById(R.id.qt_item_edit_or_close_button)
         }
     }
 
     //endregion
 
-    interface OnRecyclerViewItemClicked {
-        fun onItemClicked(position: Int)
+    /**
+     * Events for the recycler view items to fire
+     */
+    interface QuietTimeItemViewClickListener {
+        fun onEditButtonClicked(
+            position: Int,
+            quietTime: QuietTime,
+            holder: QuietTimeRecyclerAdapter.QuietTimeViewHolder
+        )
+
+        fun onDaySelected(indexOfDay: Int)
+        fun onEditTimesButtonClicked()
+        fun onDeleteButtonClicked()
+        fun onSaveButtonClicked()
     }
 }

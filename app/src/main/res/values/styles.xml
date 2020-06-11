@@ -16,6 +16,7 @@
         <item name="colorCardViewLine">@color/light_separator_line</item>
         <item name="colorIcon">@color/light_icon</item>
         <item name="colorShadowOverBackground">@color/light_shadowOverBackground</item>
+        <item name="colorCardViewIcon">@color/light_colorCardViewIcon</item>
     </style>
 
 
@@ -39,5 +40,6 @@
     <attr name="colorIcon" format="reference" />
     <attr name="colorCardViewLine" format="reference" />
     <attr name="colorShadowOverBackground" format="reference" />
+    <attr name="colorCardViewIcon" format="reference" />
 
 </resources>

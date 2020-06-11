@@ -13,4 +13,5 @@
     <color name="light_textPrimary">#010101</color>
     <color name="light_separator_line">#C1C1C1</color>
     <color name="light_icon">#FAFAFA</color>
+    <color name="light_colorCardViewIcon">#FF8A65</color>
 </resources>

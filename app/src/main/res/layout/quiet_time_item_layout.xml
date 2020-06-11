@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
+    android:animateLayoutChanges="true"
     android:paddingBottom="6dp">
 
     <TextView
@@ -25,7 +26,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
-        android:background="?attr/colorCardViewLine"
+        android:background="@color/light_colorPrimary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/qt_item_title" />
@@ -65,7 +66,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
+        android:animateLayoutChanges="true"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -154,18 +156,19 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/qt_item_edit_button"
+            android:id="@+id/qt_item_edit_times_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="1dp"
             android:background="?attr/background"
+            android:elevation="2dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/qt_item_edit_times"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/qt_item_save_button"
+            app:layout_constraintEnd_toStartOf="@+id/qt_item_delete_button"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
@@ -175,17 +178,49 @@
             android:id="@+id/qt_item_save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="1dp"
             android:background="?attr/background"
+            android:elevation="2dp"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/qt_item_edit_button"
+            app:layout_constraintStart_toEndOf="@+id/qt_item_delete_button"
             app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days_list" />
 
+        <Button
+            android:id="@+id/qt_item_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="1dp"
+            android:background="?attr/background"
+            android:elevation="2dp"
+            android:text="@string/delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/qt_item_save_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/qt_item_edit_times_button"
+            app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days_list"
+            app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/qt_item_edit_or_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="5dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/qt_item_edit_or_close_button_description"
+        android:tint="@color/light_colorCardViewIcon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/qt_item_edit_button_transition" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

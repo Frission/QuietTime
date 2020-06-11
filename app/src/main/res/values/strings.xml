@@ -29,11 +29,15 @@
     <!--  Hints  -->
     <string name="hint_enter_title">Enter title…</string>
 
+    <!--  Descriptions  -->
+    <string name="qt_item_edit_or_close_button_description">Edit or Close</string>
+
     <!--  Generic  -->
     <string name="save">Save</string>
     <string name="done">Done</string>
     <string name="all_day">All Day</string>
     <string name="main_menu_add">New Quiet Time</string>
     <string name="no_quiet_times">There are no quiet times scheduled right now.\n\n Tap the add button to create a Quiet Time.</string>
+    <string name="delete">Delete</string>
 
 </resources>
