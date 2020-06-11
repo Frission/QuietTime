@@ -3,7 +3,9 @@ package com.firatyildiz.quiettime.app
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.firatyildiz.quiettime.R
+import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
 import timber.log.Timber
 
 /**
@@ -18,6 +20,9 @@ class MainActivity : BaseActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+        // make the viewmodel last through both fragment lifecycles
+        ViewModelProvider(this).get(QuietTimeViewModel::class.java)
 
         if (savedInstanceState == null)
             createMainFragment()
@@ -54,6 +59,17 @@ class MainActivity : BaseActivity() {
             .commit()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun navigateBack() {
+        if (supportFragmentManager.backStackEntryCount != 0) {
+            supportFragmentManager.popBackStack()
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        } else {
+            Timber.w("Back stack was empty, this should not happen.")
+            supportActionBar?.setHomeButtonEnabled(false)
+        }
+
     }
 
     private fun createMainFragment() {

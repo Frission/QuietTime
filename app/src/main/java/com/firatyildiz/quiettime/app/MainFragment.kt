@@ -71,6 +71,7 @@ class MainFragment : Fragment() {
         noQuietTimesText = view.findViewById(R.id.no_quiet_times_text)
 
         viewModel.allQuietTimes.observe(viewLifecycleOwner, Observer {
+            Timber.d("live data callback")
             adapter.updateQuietTimes(it)
 
             if (it.isEmpty())

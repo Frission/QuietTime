@@ -11,7 +11,7 @@ import timber.log.Timber
  *
  * Created on 10/06/2020
  */
-abstract class BaseActivity : AppCompatActivity(), OnFragmentChangeListener {
+abstract class BaseActivity : AppCompatActivity(), OnFragmentNavigationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +21,7 @@ abstract class BaseActivity : AppCompatActivity(), OnFragmentChangeListener {
     }
 }
 
-interface OnFragmentChangeListener {
+interface OnFragmentNavigationListener {
     fun navigateToFragment(fragment: Fragment, addToBackStack: Boolean)
+    fun navigateBack()
 }

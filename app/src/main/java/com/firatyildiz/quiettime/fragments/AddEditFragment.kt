@@ -12,6 +12,7 @@ import android.widget.TimePicker
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firatyildiz.quiettime.R
+import com.firatyildiz.quiettime.app.OnFragmentNavigationListener
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
 import timber.log.Timber
@@ -66,7 +67,7 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(QuietTimeViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(QuietTimeViewModel::class.java)
         // get parameters if they exist
         arguments?.let {
             quietTime = it.getSerializable(ARG_QUIET_TIME) as? QuietTime
@@ -125,12 +126,13 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_addedit_done) {
-            // TODO insert quiet time here, should also display a dialog if it collides with other quiet times
-            //val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
             val collidingQuietTimes = viewModel.getCollidingQuietTimes(days, startTime, endTime)
 
             if (collidingQuietTimes.isEmpty()) {
-
+                Timber.d("inserting quiet time")
+                val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
+                viewModel.insertQuietTime(quietTime)
+                (activity as OnFragmentNavigationListener).navigateBack()
             } else {
                 // TODO Display a dialog warning the user that there are colliding dialogs
             }
@@ -158,8 +160,8 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
                         transitionDrawable.reverseTransition(150)
 
                         editingStartTime = true
-                        startTime = timePicker.currentHour * 60 + timePicker.currentMinute
-                        resetTimePicker(endTime)
+                        endTime = timePicker.currentHour * 60 + timePicker.currentMinute
+                        resetTimePicker(startTime)
                     }
                 }
 
@@ -172,8 +174,8 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
                         transitionDrawable.startTransition(150)
 
                         editingStartTime = false
-                        endTime = timePicker.currentHour * 60 + timePicker.currentMinute
-                        resetTimePicker(startTime)
+                        startTime = timePicker.currentHour * 60 + timePicker.currentMinute
+                        resetTimePicker(endTime)
                     }
                 }
 

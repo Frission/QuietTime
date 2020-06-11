@@ -31,13 +31,16 @@ class QuietTimeRecyclerAdapter(var context: Context, var dayNames: List<String>)
 
     fun updateQuietTimes(quietTimes: List<QuietTime>) {
         if (allQuietTimes == null) {
+            Timber.d("setting quiet times")
             setQuietTimes(quietTimes)
             notifyDataSetChanged()
             return
         }
 
+        Timber.d("updating quiet times")
         val differenceResult =
             DiffUtil.calculateDiff(QuietTimeDiffCallback(allQuietTimes!!, quietTimes))
+        allQuietTimes = quietTimes
         differenceResult.dispatchUpdatesTo(this)
     }
 

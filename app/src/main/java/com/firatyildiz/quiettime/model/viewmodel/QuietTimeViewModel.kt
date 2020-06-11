@@ -30,6 +30,6 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
-        return getCollidingQuietTimes(days, startTime, endTime)
+        return repository.getCollidingQuietTimes(days, startTime, endTime)
     }
 }
