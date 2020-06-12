@@ -27,4 +27,9 @@ data class QuietTime(
     @ColumnInfo(name = QuietTimeConstants.ID_COLUMN)
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID: Long = 12062020L
+    }
 }

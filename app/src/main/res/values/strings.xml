@@ -35,6 +35,11 @@
     <!--  Descriptions  -->
     <string name="qt_item_edit_or_close_button_description">Edit or Close</string>
 
+    <!--  Dialogs  -->
+    <string name="deletion_dialog">Are you sure you want to delete %s?</string>
+    <string name="collision_dialog_start">This quiet time collides with the following quiet times:</string>
+    <string name="collision_dialog_end">Are you sure you want to save it as it is?</string>
+
     <!--  Generic  -->
     <string name="save">Save</string>
     <string name="done">Done</string>
@@ -43,5 +48,7 @@
     <string name="main_menu_add">New Quiet Time</string>
     <string name="no_quiet_times">There are no quiet times scheduled right now.\n\n Tap the add button to create a Quiet Time.</string>
     <string name="delete">Delete</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

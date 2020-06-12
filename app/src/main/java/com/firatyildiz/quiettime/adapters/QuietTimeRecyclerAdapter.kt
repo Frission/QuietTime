@@ -16,6 +16,7 @@ import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
 import com.firatyildiz.quiettime.helpers.QuietTimeDiffCallback
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import timber.log.Timber
+import java.io.Serializable
 
 /**
  * @author Fırat Yıldız
@@ -129,7 +130,12 @@ class QuietTimeRecyclerAdapter(
 
     //region View Holder
 
-    class QuietTimeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class QuietTimeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Serializable {
+        companion object {
+            @JvmStatic
+            private val serialVersionUID: Long = 12062020L
+        }
+
         var container: View
         var titleText: TextView
         var daysText: TextView

@@ -33,6 +33,10 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
         repository.updateQuietTime(quietTime)
     }
 
+    fun deleteQuietTime(quietTime: QuietTime) {
+        repository.deleteQuietTime(quietTime)
+    }
+
     /**
      * Finds all quiet times that collide with the given time ranges
      */

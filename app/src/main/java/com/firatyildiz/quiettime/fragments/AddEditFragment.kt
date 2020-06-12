@@ -325,11 +325,6 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
     }
 
     override fun onTimeChanged(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        Timber.d(
-            "time picket ${hourOfDay.toString().padStart(2, '0')}:${minute.toString()
-                .padStart(2, '0')}"
-        )
-
         if (editingStartTime)
             startTime = hourOfDay * 60 + minute
         else

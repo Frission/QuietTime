@@ -1,5 +1,6 @@
 package com.firatyildiz.quiettime.app
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
@@ -23,6 +24,8 @@ import timber.log.Timber
 class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClickListener {
 
     companion object {
+        const val DIALOG_ID_COLLISION = 1
+        const val DIALOG_ID_DELETE = 2
         fun newInstance() = MainFragment()
     }
 
@@ -38,6 +41,8 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     private var currentQuietTime: QuietTime? = null
     private var currentQuietTimeViewHolder: QuietTimeRecyclerAdapter.QuietTimeViewHolder? = null
     private var tempDays: Int = 0
+
+    private var currentDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +111,9 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     override fun onStop() {
         super.onStop()
         currentQuietTime = null
+        currentQuietTimeViewHolder = null
+        currentDialog?.dismiss()
+        currentDialog = null
         Timber.d("main fragment is stopped")
     }
 
@@ -163,7 +171,21 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     }
 
     override fun onDeleteButtonClicked() {
+        // building the dialog here without using the AppDialog
+        // because I want it to disappear if the orientation is changed
+        val builder = AlertDialog.Builder(requireContext())
 
+        currentDialog =
+            builder.setMessage(getString(R.string.deletion_dialog, currentQuietTime!!.title))
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    currentDialog = null
+                    onPositiveDialogResult(DIALOG_ID_DELETE)
+                }
+                .setNegativeButton(R.string.no) { _, _ -> currentDialog = null }
+                .setOnDismissListener { currentDialog = null }
+                .create()
+
+        currentDialog!!.show()
     }
 
     override fun onSaveButtonClicked() {
@@ -189,4 +211,20 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         TransitionManager.beginDelayedTransition(recyclerView, transition)
         adapter.notifyDataSetChanged()
     }
+
+    //region Dialog events
+
+    private fun onPositiveDialogResult(dialogId: Int) {
+        when (dialogId) {
+            DIALOG_ID_DELETE -> {
+                Timber.d("deleting ${currentQuietTime!!.title}")
+
+                viewModel.deleteQuietTime(currentQuietTime!!)
+                currentQuietTime = null
+                currentQuietTimeViewHolder = null
+            }
+        }
+    }
+
+    //endregion
 }
