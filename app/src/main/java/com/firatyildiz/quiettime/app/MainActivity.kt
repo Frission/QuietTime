@@ -12,40 +12,36 @@ import timber.log.Timber
  * @author Fırat Yıldız
  */
 class MainActivity : BaseActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         Timber.d("creating main activity")
 
         setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         // make the viewmodel last through both fragment lifecycles
         ViewModelProvider(this).get(QuietTimeViewModel::class.java)
 
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
             createMainFragment()
+        } else {
+            Timber.d("activity is being recreated")
+            supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount != 0)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             Timber.d("home button selected")
-            if (supportFragmentManager.backStackEntryCount >= 1) {
-                if (supportFragmentManager.backStackEntryCount == 1)
-                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-                supportFragmentManager.popBackStack()
-                return true
-            } else {
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            }
+            navigateBack()
+            return true
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun navigateToFragment(fragment: Fragment, addToBackStack: Boolean) {
+    override fun navigateToFragment(fragment: Fragment) {
         Timber.d("navigating to new fragment")
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
@@ -65,6 +61,11 @@ class MainActivity : BaseActivity() {
         if (supportFragmentManager.backStackEntryCount != 0) {
             supportFragmentManager.popBackStack()
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+            if (supportFragmentManager.backStackEntryCount == 1)
+                title = getString(R.string.app_name)
+
+            Timber.d("${supportFragmentManager.backStackEntryCount}")
         } else {
             Timber.w("Back stack was empty, this should not happen.")
             supportActionBar?.setHomeButtonEnabled(false)

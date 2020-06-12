@@ -29,7 +29,22 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
         repository.insertQuietTime(quietTime)
     }
 
+    fun updateQuietTime(quietTime: QuietTime) {
+        repository.updateQuietTime(quietTime)
+    }
+
+    /**
+     * Finds all quiet times that collide with the given time ranges
+     */
     fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
         return repository.getCollidingQuietTimes(days, startTime, endTime)
+    }
+
+    /**
+     * Same as getCollidingQuietTimes(days, startTime, endTime),
+     * the id here is used to prevent collision with self
+     */
+    fun getCollidingQuietTimes(id: Int, days: Int, startTime: Int, endTime: Int): List<QuietTime> {
+        return repository.getCollidingQuietTimes(id, days, startTime, endTime)
     }
 }

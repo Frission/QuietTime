@@ -9,9 +9,9 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firatyildiz.quiettime.R
+import com.firatyildiz.quiettime.app.BaseFragment
 import com.firatyildiz.quiettime.app.OnFragmentNavigationListener
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
@@ -23,7 +23,8 @@ import timber.log.Timber
  *
  * Created on 09/06/2020
  */
-class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActionListener {
+class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorActionListener,
+    TimePicker.OnTimeChangedListener {
 
     companion object {
         const val ARG_QUIET_TIME = "QUIET_TIME"
@@ -51,6 +52,13 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
     private var startTime = 12 * 60
     private var endTime = 12 * 60
     private var days = 0
+
+    private var titleEdited = false
+    private var daysEdited = false
+
+    // since the time picker start with the start time, i'll consider the start time edited
+    //private var startTimeEdited = true
+    private var endTimeEdited = false
 
     /**
      * If this is true, the user is using the time picker to set the start time
@@ -89,6 +97,17 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
         return inflater.inflate(R.layout.fragment_add_edit, container, false)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("startTime", startTime)
+        outState.putInt("endTime", endTime)
+        outState.putInt("days", days)
+        outState.putBoolean("titleEdited", titleEdited)
+        outState.putBoolean("daysEdited", daysEdited)
+        outState.putBoolean("endTimeEdited", endTimeEdited)
+        outState.putBoolean("editingStartTime", editingStartTime)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -112,11 +131,56 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
         titleEditText.setOnEditorActionListener(this)
         startTimeLabel.setOnClickListener(this)
         endTimeLabel.setOnClickListener(this)
+        timePicker.setOnTimeChangedListener(this)
         timePicker.setIs24HourView(true)
 
-        resetTimePicker(12 * 60)
+        if (savedInstanceState != null) {
+            startTime = savedInstanceState.getInt("startTime", 12 * 60)
+            endTime = savedInstanceState.getInt("endTime", 12 * 60)
+            days = savedInstanceState.getInt("days", 0)
+            titleEdited = savedInstanceState.getBoolean("titleEdited", false)
+            daysEdited = savedInstanceState.getBoolean("daysEdited", false)
+            endTimeEdited = savedInstanceState.getBoolean("endTimeEdited", false)
+            editingStartTime = savedInstanceState.getBoolean("editingStartTime", false)
+
+            setTimePicker(if (editingStartTime) startTime else endTime)
+        } else if (isInEditingMode) {
+            days = quietTime!!.days
+            startTime = quietTime!!.startTime
+            endTime = quietTime!!.endTime
+
+            titleEditText.setText(quietTime!!.title)
+            setTimePicker(quietTime!!.startTime)
+
+            for (i in 0..6)
+                dayChoices[i].isChecked = days and (1 shl i) != 0
+
+        } else {
+            setTimePicker(12 * 60)
+        }
 
         setInitialAppearanceForTimeLabels()
+        setTitle()
+    }
+
+    /**
+     * Marks the time label as selected by making it's background light up
+     */
+    private fun setInitialAppearanceForTimeLabels() {
+        if (editingStartTime) {
+            val transitionDrawable = startTimeLabel.background as TransitionDrawable
+            transitionDrawable.startTransition(0)
+        } else {
+            val transitionDrawable = endTimeLabel.background as TransitionDrawable
+            transitionDrawable.startTransition(0)
+        }
+    }
+
+    private fun setTitle() {
+        if (isInEditingMode)
+            requireActivity().title = getString(R.string.editing_quiet_time, quietTime!!.title)
+        else
+            requireActivity().title = getString(R.string.new_quiet_time)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -124,15 +188,27 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
         inflater.inflate(R.menu.add_edit_fragment_menu, menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.getItem(0).isEnabled = (titleEdited && daysEdited && endTimeEdited) || isInEditingMode
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_addedit_done) {
-            val collidingQuietTimes = viewModel.getCollidingQuietTimes(days, startTime, endTime)
+
+            if (titleEditText.text.isNullOrEmpty()) {
+                titleEdited = false
+                requireActivity().invalidateOptionsMenu()
+                return super.onOptionsItemSelected(item)
+            }
+
+            val collidingQuietTimes = if (isInEditingMode)
+                viewModel.getCollidingQuietTimes(quietTime!!.id, days, startTime, endTime)
+            else
+                viewModel.getCollidingQuietTimes(days, startTime, endTime)
 
             if (collidingQuietTimes.isEmpty()) {
-                Timber.d("inserting quiet time")
-                val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
-                viewModel.insertQuietTime(quietTime)
-                (activity as OnFragmentNavigationListener).navigateBack()
+                saveQuietTimeAndReturn()
             } else {
                 // TODO Display a dialog warning the user that there are colliding dialogs
             }
@@ -140,6 +216,25 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun saveQuietTimeAndReturn() {
+        if (isInEditingMode) {
+            Timber.d("updating quiet time ${titleEditText.text}")
+            quietTime!!.title = titleEditText.text.toString()
+            quietTime!!.days = days
+            quietTime!!.startTime = startTime
+            quietTime!!.endTime = endTime
+
+            viewModel.updateQuietTime(quietTime!!)
+        } else {
+            Timber.d("inserting quiet time ${titleEditText.text}")
+
+            val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
+            viewModel.insertQuietTime(quietTime)
+        }
+        // finally navigate back after updating or inserting the quiet time
+        (activity as OnFragmentNavigationListener).navigateBack()
     }
 
     /**
@@ -160,8 +255,9 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
                         transitionDrawable.reverseTransition(150)
 
                         editingStartTime = true
-                        endTime = timePicker.currentHour * 60 + timePicker.currentMinute
-                        resetTimePicker(startTime)
+                        setTimePicker(startTime)
+
+                        requireActivity().invalidateOptionsMenu()
                     }
                 }
 
@@ -174,8 +270,10 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
                         transitionDrawable.startTransition(150)
 
                         editingStartTime = false
-                        startTime = timePicker.currentHour * 60 + timePicker.currentMinute
-                        resetTimePicker(endTime)
+                        setTimePicker(endTime)
+
+                        endTimeEdited = true
+                        requireActivity().invalidateOptionsMenu()
                     }
                 }
 
@@ -201,28 +299,40 @@ class AddEditFragment : Fragment(), View.OnClickListener, TextView.OnEditorActio
             days = days or orValue
         else
             days = days and 127 - orValue
-        Timber.d("Set days are ${days.toString(2).padStart(7, '0').padEnd(7, '0').reversed()}")
-    }
 
-    /**
-     * Marks the Start Time Label as selected by making it's background lightup
-     */
-    private fun setInitialAppearanceForTimeLabels() {
-        val transitionDrawable = startTimeLabel.background as TransitionDrawable
-        transitionDrawable.startTransition(0)
+        daysEdited = days != 0
+        requireActivity().invalidateOptionsMenu()
+
+        Timber.d("Set days are ${days.toString(2).padStart(7, '0').padEnd(7, '0').reversed()}")
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEND) {
             Timber.d("clearing focus from text")
             titleEditText.clearFocus()
+
+            titleEdited = titleEditText.text.isNotEmpty()
+
+            requireActivity().invalidateOptionsMenu()
         }
         return false
     }
 
-    private fun resetTimePicker(timeInMinutes: Int) {
+    private fun setTimePicker(timeInMinutes: Int) {
         // this works even if it is deprecated
         timePicker.currentHour = timeInMinutes / 60
         timePicker.currentMinute = timeInMinutes % 60
+    }
+
+    override fun onTimeChanged(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        Timber.d(
+            "time picket ${hourOfDay.toString().padStart(2, '0')}:${minute.toString()
+                .padStart(2, '0')}"
+        )
+
+        if (editingStartTime)
+            startTime = hourOfDay * 60 + minute
+        else
+            endTime = hourOfDay * 60 + minute
     }
 }

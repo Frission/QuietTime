@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    android:animateLayoutChanges="true"
     android:paddingBottom="6dp">
 
     <TextView
@@ -66,7 +65,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:animateLayoutChanges="true"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +81,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day1"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -94,7 +92,7 @@
                 android:gravity="center"
                 android:text="@string/monday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day2"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -104,7 +102,7 @@
                 android:layout_weight="1"
                 android:text="@string/tuesday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day3"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -114,7 +112,7 @@
                 android:layout_weight="1"
                 android:text="@string/wednesday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day4"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -124,7 +122,7 @@
                 android:layout_weight="1"
                 android:text="@string/thursday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day5"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -134,7 +132,7 @@
                 android:layout_weight="1"
                 android:text="@string/friday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day6"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -144,7 +142,7 @@
                 android:layout_weight="1"
                 android:text="@string/saturday_short" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/qt_item_edit_day7"
                 style="@style/VerticalRadioButton"
                 android:layout_width="wrap_content"
@@ -156,7 +154,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/qt_item_edit_times_button"
+            android:id="@+id/qt_item_edit_all_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -166,7 +164,7 @@
             android:elevation="2dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/qt_item_edit_times"
+            android:text="@string/qt_item_edit_all"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/qt_item_delete_button"
             app:layout_constraintHorizontal_bias="0.5"
@@ -204,7 +202,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/qt_item_save_button"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/qt_item_edit_times_button"
+            app:layout_constraintStart_toEndOf="@+id/qt_item_edit_all_button"
             app:layout_constraintTop_toBottomOf="@+id/qt_item_edit_days_list"
             app:layout_constraintVertical_bias="0.0" />
 

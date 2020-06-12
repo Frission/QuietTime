@@ -1,10 +1,10 @@
 package com.firatyildiz.quiettime.app
 
-import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionInflater
+import android.transition.TransitionManager
 import android.view.*
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +20,7 @@ import timber.log.Timber
 /**
  * @author Fırat Yıldız
  */
-class MainFragment : Fragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClickListener {
+class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClickListener {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -30,20 +30,14 @@ class MainFragment : Fragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClick
     private lateinit var dayNames: List<String>
     private lateinit var adapter: QuietTimeRecyclerAdapter
     private lateinit var noQuietTimesText: TextView
+    private lateinit var recyclerView: RecyclerView
 
     /**
      * The curent quiet time that is being edited by the user, if this is not null, it means that the quiet view item is expanded
      */
     private var currentQuietTime: QuietTime? = null
-    private var currentQTViewHolder: QuietTimeRecyclerAdapter.QuietTimeViewHolder? = null
-    private var currentQTposition: Int = -1
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (activity !is BaseActivity)
-            throw ClassCastException("All activity classes should inherit from the BaseActivity class")
-    }
+    private var currentQuietTimeViewHolder: QuietTimeRecyclerAdapter.QuietTimeViewHolder? = null
+    private var tempDays: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +65,11 @@ class MainFragment : Fragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClick
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.quiet_time_list)
+        recyclerView = view.findViewById<RecyclerView>(R.id.quiet_time_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = QuietTimeRecyclerAdapter(requireContext(), dayNames, this)
+
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
@@ -101,14 +96,21 @@ class MainFragment : Fragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClick
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.main_menu_add_quiet_time) {
             val addEditFragment = AddEditFragment.newInstance(null)
-            (activity as BaseActivity).navigateToFragment(addEditFragment, true)
+            (activity as BaseActivity).navigateToFragment(addEditFragment)
             return true
         }
 
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStop() {
+        super.onStop()
+        currentQuietTime = null
+        Timber.d("main fragment is stopped")
+    }
+
     //region Quiet Time Recycler View Item Listener functions
+
     override fun onEditButtonClicked(
         position: Int,
         quietTime: QuietTime,
@@ -116,41 +118,75 @@ class MainFragment : Fragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewClick
     ) {
         Timber.d("edit/close button clicked on quiet time: ${quietTime.title}")
 
+        tempDays = quietTime.days
+
+        // prepare the transition for the edit layout visibility changes
+        val transition = TransitionInflater.from(requireContext())
+            .inflateTransition(
+                if (currentQuietTime == null)
+                    R.transition.layout_to_visible
+                else
+                    R.transition.layout_to_gone
+            )
+
         if (currentQuietTime == null) {
             Timber.d("expanding the recycler view")
             currentQuietTime = quietTime
-            currentQTViewHolder = holder
-            currentQTposition = position
+            currentQuietTimeViewHolder = holder
 
-            holder.expanded = true
-            adapter.notifyItemChanged(position)
-
-        } else {
-
-            currentQTViewHolder!!.expanded = false
-            adapter.notifyItemChanged(currentQTposition)
-
+            holder.isExpanded = true
+        } else if (quietTime == currentQuietTime) {
+            holder.isExpanded = false
             currentQuietTime = null
-            currentQTViewHolder = null
-            currentQTposition = -1
+        } else {
+            currentQuietTimeViewHolder!!.isExpanded = false
+            holder.isExpanded = true
+
+            currentQuietTime = quietTime
+            currentQuietTimeViewHolder = holder
         }
+
+        // animate the visibility changes inside the recycler view item
+        // it took me several hours to find this solution
+        // why is it so obscure :(
+        TransitionManager.beginDelayedTransition(recyclerView, transition)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onDaySelected(indexOfDay: Int) {
-        TODO("Not yet implemented")
+        tempDays = tempDays xor (1 shl indexOfDay)
     }
 
-    override fun onEditTimesButtonClicked() {
-        TODO("Not yet implemented")
+    override fun onEditAllButtonClicked() {
+        val addEditFragment = AddEditFragment.newInstance(currentQuietTime)
+        (activity as BaseActivity).navigateToFragment(addEditFragment)
     }
 
     override fun onDeleteButtonClicked() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onSaveButtonClicked() {
-        TODO("Not yet implemented")
+        Timber.d("save button clicked on item")
+
+        // TODO fire a dialog if the new settings collide with any other
+
+        saveQuietTimeDetails()
     }
 
     //endregion
+
+    private fun saveQuietTimeDetails() {
+        currentQuietTime!!.days = tempDays
+        viewModel.updateQuietTime(currentQuietTime!!)
+
+        val transition = TransitionInflater.from(requireContext())
+            .inflateTransition(R.transition.layout_to_gone)
+
+        currentQuietTimeViewHolder!!.isExpanded = false
+        currentQuietTime = null
+
+        TransitionManager.beginDelayedTransition(recyclerView, transition)
+        adapter.notifyDataSetChanged()
+    }
 }

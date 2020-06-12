@@ -31,14 +31,13 @@ class CollidingQuietTimesTest {
 
     @Test
     @Throws(Exception::class)
-    fun onInsertToDatabase_CheckIf_dataIsCorrectlyInserted() {
+    fun checkIf_anyQuietTimesCollide() {
         // the first quiet time starts at 08:00 and ends at 15:00, every day
         // the second quiet time starts at 07:00 and ends at 14:00, on Monday
 
-        val quietTime = QuietTime("Quiet Time", 127, 8 * 60, 15 * 60)
+        var quietTime = QuietTime("Quiet Time", 127, 8 * 60, 15 * 60)
 
         quietTimeDao.insertQuietTime(quietTime)
-
 
         val collidingQuietTime1 = QuietTime("Colliding Time 1", 1, 7 * 60, 14 * 60)
         val collidingQuietTime2 = QuietTime("Colliding Time 2", 2, 6 * 60, 16 * 60)
@@ -89,7 +88,21 @@ class CollidingQuietTimesTest {
             nonCollidingQuietTime2.days,
             nonCollidingQuietTime2.startTime,
             nonCollidingQuietTime2.endTime
-        )!!
+        )
+
+        assertThat(collidedQuietTimes.size, equalTo(0))
+
+        // finally assert that the quiet time does not collide with itself,
+        // provided we use the correct function
+
+        quietTime = quietTimeDao.getAllQuietTimesWithoutLiveData()[0]
+
+        collidedQuietTimes = quietTimeDao.getCollidingQuietTimes(
+            quietTime.id,
+            quietTime.days,
+            quietTime.startTime,
+            quietTime.endTime
+        )
 
         assertThat(collidedQuietTimes.size, equalTo(0))
     }

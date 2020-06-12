@@ -26,4 +26,8 @@ class QuietTimeRepository(private val quietTimeDao: QuietTimeDao) {
     fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
         return quietTimeDao.getCollidingQuietTimes(days, startTime, endTime)
     }
+
+    fun getCollidingQuietTimes(id: Int, days: Int, startTime: Int, endTime: Int): List<QuietTime> {
+        return quietTimeDao.getCollidingQuietTimes(id, days, startTime, endTime)
+    }
 }

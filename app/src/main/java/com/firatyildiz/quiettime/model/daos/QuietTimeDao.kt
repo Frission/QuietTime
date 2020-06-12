@@ -34,6 +34,19 @@ interface QuietTimeDao {
     )
     fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime>
 
+    /**
+     * This query needs to be used when the quiet time is already inserted,
+     * the id will be used to prevent collision with self
+     */
+    @Query(
+        "SELECT * FROM ${QuietTimeConstants.TABLE_NAME} " +
+                "WHERE ${QuietTimeConstants.ID_COLUMN} != (:id) AND " +
+                "${QuietTimeConstants.DAYS_COLUMN} & (:days) > 0 AND (" +
+                "((:startTime) <= ${QuietTimeConstants.START_TIME_COLUMN} AND (:endTime) >= ${QuietTimeConstants.START_TIME_COLUMN}) " +
+                "OR ((:endTime) >= ${QuietTimeConstants.START_TIME_COLUMN} AND (:startTime) <= ${QuietTimeConstants.END_TIME_COLUMN}))"
+    )
+    fun getCollidingQuietTimes(id: Int, days: Int, startTime: Int, endTime: Int): List<QuietTime>
+
     @Query("DELETE FROM ${QuietTimeConstants.TABLE_NAME} WHERE ${QuietTimeConstants.ID_COLUMN} == (:id)")
     fun deleteQuietTimeById(id: Int)
 

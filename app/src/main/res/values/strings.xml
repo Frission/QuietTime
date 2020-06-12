@@ -1,12 +1,15 @@
 <resources>
+    <!--  Activity and Fragment labels  -->
     <string name="app_name">Quiet Time</string>
+    <string name="new_quiet_time">New Quiet Time</string>
+    <string name="editing_quiet_time">Editing %s</string>
 
     <!--  Quiet Time Item values  -->
     <string name="qt_item_start_time">Start Time</string>
     <string name="qt_item_end_time">End Time</string>
     <string name="qt_item_end_time_next_day">End Time (next day):</string>
     <string name="qt_item_time_next_day">%s next day</string>
-    <string name="qt_item_edit_times">Edit Times</string>
+    <string name="qt_item_edit_all">Edit All</string>
 
     <!--  Days of Week  -->
     <string name="monday">Monday</string>
@@ -35,7 +38,8 @@
     <!--  Generic  -->
     <string name="save">Save</string>
     <string name="done">Done</string>
-    <string name="all_day">All Day</string>
+    <string name="all_day">All day</string>
+    <string name="every_day">Every day</string>
     <string name="main_menu_add">New Quiet Time</string>
     <string name="no_quiet_times">There are no quiet times scheduled right now.\n\n Tap the add button to create a Quiet Time.</string>
     <string name="delete">Delete</string>

@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageButton
-import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -64,8 +64,10 @@ class QuietTimeRecyclerAdapter(
     override fun onBindViewHolder(holder: QuietTimeViewHolder, position: Int) {
         allQuietTimes?.let {
             holder.titleText.text = it[position].title
-            holder.daysText.text =
+            holder.daysText.text = if (it[position].days != 127)
                 DateTimeLocalizationHelper.getActiveWeekDaysAsString(dayNames, it[position].days)
+            else
+                context.getString(R.string.every_day)
 
             if (it[position].startTime == it[position].endTime)
                 holder.timeRangeText.text = context.getString(R.string.all_day)
@@ -96,15 +98,26 @@ class QuietTimeRecyclerAdapter(
                 )
             }
             holder.saveButton.setOnClickListener { itemListener.onSaveButtonClicked() }
-            holder.editTimesButton.setOnClickListener { itemListener.onEditTimesButtonClicked() }
+            holder.editAllButton.setOnClickListener { itemListener.onEditAllButtonClicked() }
             holder.deleteButton.setOnClickListener { itemListener.onDeleteButtonClicked() }
 
-            if (holder.expanded)
+            if (holder.isExpanded) {
                 holder.editLayout.visibility = View.VISIBLE
-            else
+
+                // set the days for the checkboxes by comparing bits
+                for (i in 0..6) {
+                    holder.dayChoiceButtons[i].isChecked = it[position].days and (1 shl i) != 0
+                }
+            } else
                 holder.editLayout.visibility = View.GONE
 
-            //animateViewHolder(holder)
+            // animate the appearing of this item if it is the first time it's appearing
+            if (holder.isAppearingForFirstTime) {
+                holder.container.animation = AnimationUtils.loadAnimation(context, R.anim.pop_in)
+                holder.container.animation.startOffset = (100 * position).toLong()
+                holder.isAppearingForFirstTime = false
+            } else
+                holder.container.clearAnimation()
         }
     }
 
@@ -121,14 +134,15 @@ class QuietTimeRecyclerAdapter(
         var titleText: TextView
         var daysText: TextView
         var timeRangeText: TextView
-        var dayChoiceButtons: List<RadioButton>
+        var dayChoiceButtons: List<CheckBox>
         var editLayout: View
-        var editTimesButton: Button
+        var editAllButton: Button
         var editOrCloseButton: ImageButton
         var deleteButton: Button
         var saveButton: Button
 
-        var expanded = false
+        var isExpanded = false
+        var isAppearingForFirstTime = true
 
         init {
             container = itemView.findViewById(R.id.quiet_time_card)
@@ -146,8 +160,8 @@ class QuietTimeRecyclerAdapter(
                 itemView.findViewById(R.id.qt_item_edit_day7)
             )
 
-            editTimesButton = itemView.findViewById(R.id.qt_item_edit_times_button)
-            saveButton = itemView.findViewById(R.id.qt_item_edit_times_button)
+            editAllButton = itemView.findViewById(R.id.qt_item_edit_all_button)
+            saveButton = itemView.findViewById(R.id.qt_item_save_button)
             deleteButton = itemView.findViewById(R.id.qt_item_delete_button)
             editOrCloseButton = itemView.findViewById(R.id.qt_item_edit_or_close_button)
         }
@@ -162,11 +176,11 @@ class QuietTimeRecyclerAdapter(
         fun onEditButtonClicked(
             position: Int,
             quietTime: QuietTime,
-            holder: QuietTimeRecyclerAdapter.QuietTimeViewHolder
+            holder: QuietTimeViewHolder
         )
 
         fun onDaySelected(indexOfDay: Int)
-        fun onEditTimesButtonClicked()
+        fun onEditAllButtonClicked()
         fun onDeleteButtonClicked()
         fun onSaveButtonClicked()
     }

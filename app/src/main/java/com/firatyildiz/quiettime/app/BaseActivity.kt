@@ -16,12 +16,12 @@ abstract class BaseActivity : AppCompatActivity(), OnFragmentNavigationListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG && savedInstanceState == null)
             Timber.plant(Timber.DebugTree())
     }
 }
 
 interface OnFragmentNavigationListener {
-    fun navigateToFragment(fragment: Fragment, addToBackStack: Boolean)
+    fun navigateToFragment(fragment: Fragment)
     fun navigateBack()
 }
