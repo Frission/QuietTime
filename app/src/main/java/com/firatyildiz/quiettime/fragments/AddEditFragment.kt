@@ -163,6 +163,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         setTitle()
     }
 
+
     /**
      * Marks the time label as selected by making it's background light up
      */

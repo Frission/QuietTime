@@ -15,4 +15,5 @@ abstract class BaseFragment : Fragment() {
         if (activity !is BaseActivity)
             throw ClassCastException("All activity classes should inherit from the BaseActivity class")
     }
+
 }

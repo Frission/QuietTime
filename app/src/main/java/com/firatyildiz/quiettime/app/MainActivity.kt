@@ -41,14 +41,21 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        if (supportFragmentManager.backStackEntryCount == 0)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
     override fun navigateToFragment(fragment: Fragment) {
         Timber.d("navigating to new fragment")
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
-                R.anim.fragment_open_enter,
-                R.anim.fragment_close_exit,
-                R.anim.fragment_open_enter,
-                R.anim.fragment_close_exit
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out,
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out
             )
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
@@ -76,6 +83,12 @@ class MainActivity : BaseActivity() {
     private fun createMainFragment() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, MainFragment.newInstance())
+            .setCustomAnimations(
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out,
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out
+            )
             .commitNow()
     }
 }
