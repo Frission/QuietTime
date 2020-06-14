@@ -32,4 +32,21 @@ data class QuietTime(
         @JvmStatic
         private val serialVersionUID: Long = 12062020L
     }
+
+    /**
+     * Returns a unique request code for the pending intent up to 999 alarms.
+     *
+     * @param dayIndex The index of the day in a week. First day of week is 0
+     * @param isEndTimeRequest We need a way to differentiate between a quiet time's start and end requests, this boolean will add
+     * 1 to the request code to make it unique again
+     */
+    fun createRequestCode(dayIndex: Int, isEndTimeRequest: Boolean): Int {
+        val requestCodeStart = id.toString().padEnd(7, '0').toInt()
+        var requestCode = (requestCodeStart + (days and (1 shl dayIndex)))
+
+        if (isEndTimeRequest)
+            requestCode += 1
+
+        return requestCode
+    }
 }

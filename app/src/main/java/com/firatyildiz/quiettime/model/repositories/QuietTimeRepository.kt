@@ -23,6 +23,10 @@ class QuietTimeRepository(private val quietTimeDao: QuietTimeDao) {
         quietTimeDao.deleteQuietTime(quietTime)
     }
 
+    fun getQuietTimeById(id: Int): QuietTime? {
+        return quietTimeDao.getQuietTimeById(id)
+    }
+
     fun getCollidingQuietTimes(days: Int, startTime: Int, endTime: Int): List<QuietTime> {
         return quietTimeDao.getCollidingQuietTimes(days, startTime, endTime)
     }

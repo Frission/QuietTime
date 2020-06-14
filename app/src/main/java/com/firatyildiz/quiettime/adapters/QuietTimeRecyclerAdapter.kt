@@ -17,6 +17,7 @@ import com.firatyildiz.quiettime.helpers.QuietTimeDiffCallback
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import timber.log.Timber
 import java.io.Serializable
+import java.util.*
 
 /**
  * @author Fırat Yıldız
@@ -24,6 +25,7 @@ import java.io.Serializable
 class QuietTimeRecyclerAdapter(
     var context: Context,
     var dayNames: List<String>,
+    var currentLocale: Locale,
     var itemListener: QuietTimeItemViewClickListener
 ) :
     RecyclerView.Adapter<QuietTimeRecyclerAdapter.QuietTimeViewHolder>() {
@@ -106,9 +108,8 @@ class QuietTimeRecyclerAdapter(
                 holder.editLayout.visibility = View.VISIBLE
 
                 // set the days for the checkboxes by comparing bits
-                for (i in 0..6) {
+                for (i in 0..6)
                     holder.dayChoiceButtons[i].isChecked = it[position].days and (1 shl i) != 0
-                }
             } else
                 holder.editLayout.visibility = View.GONE
 

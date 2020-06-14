@@ -9,13 +9,17 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TimePicker
+import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.ViewModelProvider
 import com.firatyildiz.quiettime.R
+import com.firatyildiz.quiettime.app.AppDialog
 import com.firatyildiz.quiettime.app.BaseFragment
 import com.firatyildiz.quiettime.app.OnFragmentNavigationListener
+import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
 import timber.log.Timber
+import java.util.*
 
 
 /**
@@ -24,10 +28,12 @@ import timber.log.Timber
  * Created on 09/06/2020
  */
 class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorActionListener,
-    TimePicker.OnTimeChangedListener {
+    TimePicker.OnTimeChangedListener, AppDialog.DialogEvents {
 
     companion object {
         const val ARG_QUIET_TIME = "QUIET_TIME"
+        const val DIALOG_ID_COLLISION = 1
+        const val DIALOG_ID_DELETE = 2
 
         /**
          * Puts the Quiet Time object as an argument if it is supplied
@@ -41,6 +47,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
     }
 
     private var quietTime: QuietTime? = null
+    private lateinit var currentLocale: Locale
     private lateinit var viewModel: QuietTimeViewModel
 
     private lateinit var startTimeLabel: TextView
@@ -55,6 +62,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
 
     private var titleEdited = false
     private var daysEdited = false
+    private var currentDialog: AppDialog? = null
 
     // since the time picker start with the start time, i'll consider the start time edited
     //private var startTimeEdited = true
@@ -86,6 +94,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             if (quietTime != null)
                 isInEditingMode = true
         }
+        currentLocale = ConfigurationCompat.getLocales(resources.configuration)[0]
     }
 
     override fun onCreateView(
@@ -125,8 +134,12 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             view.findViewById(R.id.edit_day7)
         )
 
-        for (dayChoice in dayChoices)
+        val weekDayStringIds = DateTimeLocalizationHelper.getWeekStringIds(currentLocale)
+
+        for ((index, dayChoice) in dayChoices.withIndex()) {
             dayChoice.setOnClickListener(this)
+            dayChoice.text = getString(weekDayStringIds[index])
+        }
 
         titleEditText.setOnEditorActionListener(this)
         startTimeLabel.setOnClickListener(this)
@@ -153,7 +166,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             setTimePicker(quietTime!!.startTime)
 
             for (i in 0..6)
-                dayChoices[i].isChecked = days and (1 shl i) != 0
+                dayChoices!![i].isChecked = days and (1 shl i) != 0
 
         } else {
             setTimePicker(12 * 60)
@@ -162,7 +175,6 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         setInitialAppearanceForTimeLabels()
         setTitle()
     }
-
 
     /**
      * Marks the time label as selected by making it's background light up
@@ -211,7 +223,22 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             if (collidingQuietTimes.isEmpty()) {
                 saveQuietTimeAndReturn()
             } else {
-                // TODO Display a dialog warning the user that there are colliding dialogs
+                val message = StringBuilder()
+                message.append(getString(R.string.collision_dialog_start) + "\n\n")
+
+                for (collidingTime in collidingQuietTimes)
+                    message.append(collidingTime.title + "\n")
+
+                message.append("\n" + getString(R.string.collision_dialog_end))
+
+                currentDialog = AppDialog()
+                val dialogArgs = Bundle().also {
+                    it.putInt(AppDialog.DIALOG_ID, DIALOG_ID_COLLISION)
+                    it.putString(AppDialog.DIALOG_MESSAGE, message.toString())
+                }
+
+                currentDialog!!.arguments = dialogArgs
+                currentDialog!!.show(parentFragmentManager, null)
             }
 
             return true
@@ -227,12 +254,12 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             quietTime!!.startTime = startTime
             quietTime!!.endTime = endTime
 
-            viewModel.updateQuietTime(quietTime!!)
+            viewModel.updateQuietTime(quietTime!!, currentLocale)
         } else {
             Timber.d("inserting quiet time ${titleEditText.text}")
 
             val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
-            viewModel.insertQuietTime(quietTime)
+            viewModel.insertQuietTime(quietTime, currentLocale)
         }
         // finally navigate back after updating or inserting the quiet time
         (activity as OnFragmentNavigationListener).navigateBack()
@@ -331,4 +358,20 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         else
             endTime = hourOfDay * 60 + minute
     }
+
+    //region Dialog Events
+
+    override fun onPositiveDialogResult(dialogId: Int, args: Bundle?) {
+        saveQuietTimeAndReturn()
+        currentDialog = null
+    }
+
+    override fun onNegativeDialogResult(dialogId: Int, args: Bundle?) {
+        currentDialog = null
+    }
+
+    override fun onDialogCancelled(dialogId: Int) {
+        currentDialog = null
+    }
+    //endregion
 }

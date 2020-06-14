@@ -15,6 +15,9 @@ interface QuietTimeDao {
     @Query("SELECT * FROM ${QuietTimeConstants.TABLE_NAME}")
     fun getAllQuietTimes(): LiveData<List<QuietTime>>
 
+    @Query("SELECT * FROM ${QuietTimeConstants.TABLE_NAME} WHERE ${QuietTimeConstants.ID_COLUMN} == (:id)")
+    fun getQuietTimeById(id: Int): QuietTime?
+
     /**
      * First, check if any days in the week collide by bitwise AND, if the result is not 0, then some days are colliding.
      * On the colliding days, check if the given start time or end time collides with this quiet time.

@@ -11,6 +11,12 @@
         android:theme="@style/LightTheme"
         android:hardwareAccelerated="true">
 
+        <receiver
+            android:process=":remote"
+            android:enabled="true"
+            android:exported="true"
+            android:name="com.firatyildiz.quiettime.app.QuietTimeAlarmReceiver" />
+
         <activity android:name=".app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -216,9 +216,9 @@
         android:layout_marginEnd="5dp"
         android:background="#00FFFFFF"
         android:contentDescription="@string/qt_item_edit_or_close_button_description"
-        android:tint="@color/light_colorCardViewIcon"
+        android:src="@drawable/qt_item_edit_button_transition"
+        android:tint="@color/light_colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/qt_item_edit_button_transition" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
