@@ -32,6 +32,9 @@
     <!--  Hints  -->
     <string name="hint_enter_title">Title</string>
 
+    <!--  Menu Items  -->
+    <string name="main_menu_about">About</string>
+
     <!--  Descriptions  -->
     <string name="qt_item_edit_or_close_button_description">Edit or Close</string>
 
@@ -61,5 +64,14 @@
     <string name="mute">Mute</string>
     <string name="vibrate">Vibrate</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="repeat">Repeats every:</string>
+    <string name="ok">OK</string>
+
+    <string name="about_title">Quiet Time</string>
+    <string name="about_description">
+        &lt;small>&lt;br>v1.0.0&lt;br>Quiet Time by Fırat Yıldız&lt;br>&lt;cite>App Icon courtesy of svgrepo.com&lt;/cite>&lt;/small>
+        &lt;br>&lt;br>
+        If you like the app, leave a rating on Google Play Store!
+    </string>
 
 </resources>

@@ -13,6 +13,7 @@ import android.transition.TransitionManager
 import android.view.*
 import android.widget.TextView
 import androidx.core.os.ConfigurationCompat
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +56,7 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     private var tempDays: Int = 0
 
     private var currentDialog: AlertDialog? = null
+    private var aboutdialog: AlertDialog? = null
     private var hasDoNotDisturbPermission = true
     private lateinit var mainView: View
 
@@ -148,6 +150,8 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
             val addEditFragment = AddEditFragment.newInstance(null)
             (activity as BaseActivity).navigateToFragment(addEditFragment)
             return true
+        } else if (item.itemId == R.id.main_menu_about) {
+            showAboutDialog()
         }
 
         return super.onOptionsItemSelected(item)
@@ -157,8 +161,11 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         super.onStop()
         currentQuietTime = null
         currentQuietTimeViewHolder = null
+
         currentDialog?.dismiss()
         currentDialog = null
+        aboutdialog?.dismiss()
+        aboutdialog = null
         Timber.d("main fragment is stopped")
     }
 
@@ -363,6 +370,21 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         } else {
             hasDoNotDisturbPermission = true
         }
+    }
+
+    private fun showAboutDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val title = getString(R.string.about_title)
+        val message = HtmlCompat.fromHtml(getString(R.string.about_description), 0)
+
+        aboutdialog = builder.setMessage(message)
+            .setPositiveButton(R.string.ok) { _, _ -> aboutdialog = null }
+            .setOnDismissListener { aboutdialog = null }
+            .setTitle(title)
+            .setIcon(R.drawable.ic_about_icon)
+            .create()
+
+        aboutdialog!!.show()
     }
 
     //endregion

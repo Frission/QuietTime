@@ -10,21 +10,27 @@
     tools:context=".fragments.AddEditFragment"
     tools:layout_marginTop="?attr/actionBarSize">
 
-    <EditText
-        android:id="@+id/edit_quiet_time_title"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_quiet_time_title_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:autofillHints=""
-        android:hint="@string/hint_enter_title"
-        android:imeOptions="normal|actionDone"
-        android:inputType="text"
-        android:maxLength="64"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/edit_quiet_time_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_enter_title"
+            android:imeOptions="normal|actionDone"
+            android:inputType="text"
+            android:maxLength="64" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/edit_days"
@@ -37,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_quiet_time_title">
+        app:layout_constraintTop_toBottomOf="@id/edit_quiet_time_title_layout">
 
         <CheckBox
             android:id="@+id/edit_day1"
