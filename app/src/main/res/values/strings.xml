@@ -30,7 +30,7 @@
     <string name="sunday_short">Sun</string>
 
     <!--  Hints  -->
-    <string name="hint_enter_title">Enter title…</string>
+    <string name="hint_enter_title">Title</string>
 
     <!--  Descriptions  -->
     <string name="qt_item_edit_or_close_button_description">Edit or Close</string>
