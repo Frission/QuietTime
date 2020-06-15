@@ -64,6 +64,11 @@ class QuietTimeAlarmManager(val context: Context) {
                         flag
                     )
                     Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
+                    Timber.d(
+                        "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
+                            Calendar.DAY_OF_MONTH
+                        )}"
+                    )
                 }
             }
 
@@ -84,6 +89,11 @@ class QuietTimeAlarmManager(val context: Context) {
                         flag
                     )
                     Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
+                    Timber.d(
+                        "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
+                            Calendar.DAY_OF_MONTH
+                        )}"
+                    )
 
                     // end alarm
                     setQuietTimeAlarm(
@@ -96,6 +106,11 @@ class QuietTimeAlarmManager(val context: Context) {
                         flag
                     )
                     Timber.d("end request id is ${quietTime.createRequestCode(i, true)}")
+                    Timber.d(
+                        "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
+                            Calendar.DAY_OF_MONTH
+                        )}"
+                    )
                 }
             }
 
@@ -117,6 +132,11 @@ class QuietTimeAlarmManager(val context: Context) {
                         flag
                     )
                     Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
+                    Timber.d(
+                        "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
+                            Calendar.DAY_OF_MONTH
+                        )}"
+                    )
 
                     // the end time is in the next day
                     val dayIndex = i + 1 % 7
@@ -132,6 +152,11 @@ class QuietTimeAlarmManager(val context: Context) {
                         flag
                     )
                     Timber.d("end request id is ${quietTime.createRequestCode(i, true)}")
+                    Timber.d(
+                        "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
+                            Calendar.DAY_OF_MONTH
+                        )}"
+                    )
                 }
             }
         }

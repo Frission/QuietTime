@@ -14,7 +14,6 @@ import com.firatyildiz.quiettime.R
 import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
 import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -77,7 +76,9 @@ class QuietTimeAlarmReceiver : BroadcastReceiver() {
     }
 
     fun turnSilentModeOn(context: Context?, audioManager: AudioManager, silenceMode: Int) {
-        Timber.d("turning silent mode on")
+        // logs only work if the receiver is not a remote process
+        //Timber.d("turning silent mode on")
+
         if (context != null) {
             val builder =
                 NotificationCompat.Builder(context, QuietTimeConstants.NOTIFICATION_CHANNEL_ID)
@@ -101,7 +102,8 @@ class QuietTimeAlarmReceiver : BroadcastReceiver() {
     }
 
     fun turnSilentModeOff(context: Context?, audioManager: AudioManager) {
-        Timber.d("turning silent mode off")
+        // logs only work if the receiver is not a remote process
+        //Timber.d("turning silent mode off")
         if (context != null) {
             var builder =
                 NotificationCompat.Builder(context, QuietTimeConstants.NOTIFICATION_CHANNEL_ID)
@@ -115,10 +117,10 @@ class QuietTimeAlarmReceiver : BroadcastReceiver() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && notificationManager.isNotificationPolicyAccessGranted) {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-                notificationManager.notify(1, builder.build())
+                notificationManager.notify(0, builder.build())
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-                notificationManager.notify(1, builder.build())
+                notificationManager.notify(0, builder.build())
             }
 
             quietTime?.let {
@@ -163,5 +165,8 @@ class QuietTimeAlarmReceiver : BroadcastReceiver() {
                 calendar.timeInMillis,
                 pendingIntent
             )
+
+        // logs only work if the receiver is not a remote process
+        //Timber.d("new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(Calendar.DAY_OF_MONTH)}")
     }
 }

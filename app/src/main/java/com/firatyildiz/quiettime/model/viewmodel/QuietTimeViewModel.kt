@@ -64,7 +64,7 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
 
         repository.updateQuietTime(quietTime)
 
-        alarmManager.createAlarmsForQuietTime(quietTime, currentLocale, false)
+        alarmManager.createAlarmsForQuietTime(quietTime, currentLocale, true)
     }
 
     fun deleteQuietTime(quietTime: QuietTime) {
