@@ -147,7 +147,7 @@ class QuietTimeAlarmManager(val context: Context) {
                         timeInMillis,
                         calendar,
                         quietTime,
-                        i,
+                        dayIndex,
                         alarmManager,
                         flag
                     )
