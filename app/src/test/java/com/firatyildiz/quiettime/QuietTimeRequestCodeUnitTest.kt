@@ -1,5 +1,6 @@
 package com.firatyildiz.quiettime
 
+import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -14,7 +15,7 @@ class QuietTimeRequestCodeUnitTest {
 
     @Test
     fun quietTimeRequestCode_returnsAsExpected() {
-        val quietTime = QuietTime("Test", 127, 12 * 60, 15 * 60)
+        val quietTime = QuietTime("Test", 127, 12 * 60, 15 * 60, QuietTimeConstants.VIBRATE)
         quietTime.id = 1
 
         var requestCode = quietTime.createRequestCode(0, false)

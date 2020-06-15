@@ -1,6 +1,7 @@
 package com.firatyildiz.quiettime
 
 import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
+import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers.equalTo
@@ -113,7 +114,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to monday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        var quietTime = QuietTime("Test", 127, 12 * 60 + 30, 15 * 60)
+        var quietTime = QuietTime("Test", 127, 12 * 60 + 30, 15 * 60, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 1, 12, 30, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 1, true)
@@ -128,7 +129,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to tuesday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 2, 15, 0, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 2, true)
@@ -143,7 +144,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to tuesday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 2, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 2, false)
@@ -158,7 +159,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to saturday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 6, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 6, false)
@@ -173,7 +174,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is saturday
         // schedule to saturday
         calendar.set(2020, 5, 6, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 6, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 6, false)
@@ -188,7 +189,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is sunday
         // schedule to saturday
         calendar.set(2020, 5, 7, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 13, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 6, false)
@@ -203,10 +204,25 @@ class DateTimeLocalizationHelperUnitTests {
         // date is sunday
         // schedule to monday
         calendar.set(2020, 5, 7, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 8, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 1, false)
+
+        assertThat(
+            calendar.get(Calendar.DAY_OF_MONTH),
+            equalTo(expectedCalendar.get(Calendar.DAY_OF_MONTH))
+        )
+        assertThat(calendar.get(Calendar.HOUR), equalTo(expectedCalendar.get(Calendar.HOUR)))
+        assertThat(calendar.get(Calendar.MINUTE), equalTo(expectedCalendar.get(Calendar.MINUTE)))
+
+        // date is sunday
+        // schedule to wednesday
+        calendar.set(2020, 5, 7, 12, 0, 0)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
+        expectedCalendar.set(2020, 5, 10, 17, 47, 0)
+
+        DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 3, false)
 
         assertThat(
             calendar.get(Calendar.DAY_OF_MONTH),
@@ -224,7 +240,8 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to monday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        var quietTime = QuietTime("UK First", 127, 12 * 60 + 30, 15 * 60)
+        var quietTime =
+            QuietTime("UK First", 127, 12 * 60 + 30, 15 * 60, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 1, 12, 30, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 0, true)
@@ -239,7 +256,7 @@ class DateTimeLocalizationHelperUnitTests {
         // date is monday
         // schedule to wednesday
         calendar.set(2020, 5, 1, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 5, 3, 15, 0, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 2, true)
@@ -255,7 +272,8 @@ class DateTimeLocalizationHelperUnitTests {
         // date is sunday
         // schedule to sunday
         calendar.set(2020, 5, 7, 12, 0, 0)
-        quietTime = QuietTime("Sunday Test 2 UK", 127, 15 * 60, 17 * 60 + 47)
+        quietTime =
+            QuietTime("Sunday Test 2 UK", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
         expectedCalendar.set(2020, 4, 7, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 6, false)
@@ -270,8 +288,9 @@ class DateTimeLocalizationHelperUnitTests {
         // date is sunday
         // schedule to saturday
         calendar.set(2020, 5, 7, 12, 0, 0)
-        quietTime = QuietTime("Sunday Test 3 UK", 127, 15 * 60, 17 * 60 + 47)
-        expectedCalendar.set(2020, 5, 6, 17, 47, 0)
+        quietTime =
+            QuietTime("Sunday Test 3 UK", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
+        expectedCalendar.set(2020, 5, 13, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 5, false)
 
@@ -285,10 +304,25 @@ class DateTimeLocalizationHelperUnitTests {
         // date is sunday
         // schedule to monday
         calendar.set(2020, 5, 7, 12, 0, 0)
-        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47)
-        expectedCalendar.set(2020, 5, 1, 17, 47, 0)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
+        expectedCalendar.set(2020, 5, 8, 17, 47, 0)
 
         DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 0, false)
+
+        assertThat(
+            calendar.get(Calendar.DAY_OF_MONTH),
+            equalTo(expectedCalendar.get(Calendar.DAY_OF_MONTH))
+        )
+        assertThat(calendar.get(Calendar.HOUR), equalTo(expectedCalendar.get(Calendar.HOUR)))
+        assertThat(calendar.get(Calendar.MINUTE), equalTo(expectedCalendar.get(Calendar.MINUTE)))
+
+        // date is sunday
+        // schedule to wednesday
+        calendar.set(2020, 5, 7, 12, 0, 0)
+        quietTime = QuietTime("Test", 127, 15 * 60, 17 * 60 + 47, QuietTimeConstants.VIBRATE)
+        expectedCalendar.set(2020, 5, 10, 17, 47, 0)
+
+        DateTimeLocalizationHelper.setCalendarDateToQuietTime(calendar, quietTime, 2, false)
 
         assertThat(
             calendar.get(Calendar.DAY_OF_MONTH),

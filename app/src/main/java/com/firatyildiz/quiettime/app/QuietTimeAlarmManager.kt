@@ -1,6 +1,7 @@
 package com.firatyildiz.quiettime.app
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -18,17 +19,17 @@ import java.util.*
  */
 class QuietTimeAlarmManager(val context: Context) {
 
-
-    companion object {
-        const val SILENT_MODE = "silentMode"
-    }
-
     fun createAlarmsForQuietTime(quietTime: QuietTime, currentLocale: Locale): Boolean {
         Timber.d("creating alarms for ${quietTime.title}")
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
 
-        if (alarmManager == null)
+        if (alarmManager == null || notificationManager == null)
+            return false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !notificationManager.isNotificationPolicyAccessGranted)
             return false
 
         val calendar = GregorianCalendar.getInstance(currentLocale)
@@ -43,83 +44,25 @@ class QuietTimeAlarmManager(val context: Context) {
                 if (quietTime.days and (1 shl i) != 0) {
                     // the day is active, schedule an alarm
 
-                    calendar.apply { this.timeInMillis = timeInMillis }
-
-                    val pendingIntent = createQuietTimePendingIntent(quietTime, i, false)
-                    DateTimeLocalizationHelper.setCalendarDateToQuietTime(
-                        calendar,
-                        quietTime,
-                        i,
-                        true
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 23)
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                    else
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
+                    // start alarm, and no need for end alarm
+                    setQuietTimeAlarm(true, timeInMillis, calendar, quietTime, i, alarmManager)
+                    Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
                 }
             }
 
         } else if (quietTime.startTime < quietTime.endTime) {
             // a normal alarm where start time is before the end time
-
             for (i in 0..6) {
                 if (quietTime.days and (1 shl i) != 0) {
                     // the day is active, schedule an alarm
 
-                    calendar.apply { this.timeInMillis = timeInMillis }
+                    // start alarm
+                    setQuietTimeAlarm(true, timeInMillis, calendar, quietTime, i, alarmManager)
+                    Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
 
-                    var pendingIntent = createQuietTimePendingIntent(quietTime, i, false)
-                    DateTimeLocalizationHelper.setCalendarDateToQuietTime(
-                        calendar,
-                        quietTime,
-                        i,
-                        true
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 23)
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                    else
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-
-                    calendar.apply { this.timeInMillis = timeInMillis }
-
-                    pendingIntent = createQuietTimePendingIntent(quietTime, i, true)
-                    DateTimeLocalizationHelper.setCalendarDateToQuietTime(
-                        calendar,
-                        quietTime,
-                        i,
-                        false
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 23)
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                    else
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
+                    // end alarm
+                    setQuietTimeAlarm(false, timeInMillis, calendar, quietTime, i, alarmManager)
+                    Timber.d("end request id is ${quietTime.createRequestCode(i, true)}")
                 }
             }
 
@@ -130,57 +73,16 @@ class QuietTimeAlarmManager(val context: Context) {
                 if (quietTime.days and (1 shl i) != 0) {
                     // the day is active, schedule an alarm
 
-                    calendar.apply { this.timeInMillis = timeInMillis }
-
-                    var pendingIntent = createQuietTimePendingIntent(quietTime, i, false)
-                    DateTimeLocalizationHelper.setCalendarDateToQuietTime(
-                        calendar,
-                        quietTime,
-                        i,
-                        true
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 23)
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                    else
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-
-                    calendar.apply { this.timeInMillis = timeInMillis }
+                    // start alarm
+                    setQuietTimeAlarm(true, timeInMillis, calendar, quietTime, i, alarmManager)
+                    Timber.d("start request id is ${quietTime.createRequestCode(i, false)}")
 
                     // the end time is in the next day
                     val dayIndex = i + 1 % 7
 
-                    pendingIntent = createQuietTimePendingIntent(quietTime, dayIndex, true)
-                    DateTimeLocalizationHelper.setCalendarDateToQuietTime(
-                        calendar,
-                        quietTime,
-                        dayIndex,
-                        false
-                    )
-
-                    // calendar was set to the start of the week, add 7 days
-                    calendar.add(Calendar.DAY_OF_MONTH, 7)
-
-                    if (Build.VERSION.SDK_INT >= 23)
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                    else
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
+                    // end alarm
+                    setQuietTimeAlarm(false, timeInMillis, calendar, quietTime, i, alarmManager)
+                    Timber.d("end request id is ${quietTime.createRequestCode(i, true)}")
                 }
             }
         }
@@ -207,6 +109,7 @@ class QuietTimeAlarmManager(val context: Context) {
 
 
                     val pendingIntent = getQuietTimePendingIntent(quietTime, i, false)
+                    Timber.d("delete start request id is ${quietTime.createRequestCode(i, false)}")
 
                     if (pendingIntent != null)
                         alarmManager.cancel(pendingIntent)
@@ -223,6 +126,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     // the day is active, schedule an alarm
 
                     var pendingIntent = getQuietTimePendingIntent(quietTime, i, false)
+                    Timber.d("delete start request id is ${quietTime.createRequestCode(i, false)}")
 
                     if (pendingIntent != null)
                         alarmManager.cancel(pendingIntent)
@@ -230,6 +134,7 @@ class QuietTimeAlarmManager(val context: Context) {
                         Timber.w("the pending intents for ${quietTime.title} are lost!")
 
                     pendingIntent = getQuietTimePendingIntent(quietTime, i, true)
+                    Timber.d("delete end request id is ${quietTime.createRequestCode(i, true)}")
 
                     if (pendingIntent != null)
                         alarmManager.cancel(pendingIntent)
@@ -246,6 +151,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     // the day is active, schedule an alarm
 
                     var pendingIntent = getQuietTimePendingIntent(quietTime, i, false)
+                    Timber.d("delete start request id is ${quietTime.createRequestCode(i, false)}")
 
                     if (pendingIntent != null)
                         alarmManager.cancel(pendingIntent)
@@ -253,6 +159,7 @@ class QuietTimeAlarmManager(val context: Context) {
                         Timber.w("the pending intents for ${quietTime.title} are lost!")
 
                     pendingIntent = getQuietTimePendingIntent(quietTime, i, true)
+                    Timber.d("delete end request id is ${quietTime.createRequestCode(i, true)}")
 
                     if (pendingIntent != null)
                         alarmManager.cancel(pendingIntent)
@@ -261,6 +168,38 @@ class QuietTimeAlarmManager(val context: Context) {
                 }
             }
         }
+    }
+
+    fun setQuietTimeAlarm(
+        isStartTimeAlarm: Boolean,
+        currentTimeInMillis: Long,
+        calendar: Calendar,
+        quietTime: QuietTime,
+        dayIndex: Int,
+        alarmManager: AlarmManager
+    ) {
+        calendar.apply { this.timeInMillis = currentTimeInMillis }
+
+        var pendingIntent = createQuietTimePendingIntent(quietTime, dayIndex, !isStartTimeAlarm)
+        DateTimeLocalizationHelper.setCalendarDateToQuietTime(
+            calendar,
+            quietTime,
+            dayIndex,
+            isStartTimeAlarm
+        )
+
+        if (Build.VERSION.SDK_INT >= 23)
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                pendingIntent
+            )
+        else
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                pendingIntent
+            )
     }
 
     /**
@@ -278,15 +217,16 @@ class QuietTimeAlarmManager(val context: Context) {
         val intent = Intent(context, QuietTimeAlarmReceiver::class.java)
 
         if (!isEndTimeRequest)
-            intent.putExtra(SILENT_MODE, true)
+            intent.putExtra(QuietTimeConstants.SILENT_MODE, true)
         else
-            intent.putExtra(SILENT_MODE, false)
+            intent.putExtra(QuietTimeConstants.SILENT_MODE, false)
 
         intent.putExtra(QuietTimeConstants.ID_COLUMN, quietTime.id)
         intent.putExtra(QuietTimeConstants.TITLE_COLUMN, quietTime.title)
         intent.putExtra(QuietTimeConstants.START_TIME_COLUMN, quietTime.startTime)
         intent.putExtra(QuietTimeConstants.END_TIME_COLUMN, quietTime.endTime)
         intent.putExtra(QuietTimeConstants.DAYS_COLUMN, quietTime.days)
+        intent.putExtra(QuietTimeConstants.SILENCE_MODE_COLUMN, quietTime.silenceMode)
 
         return PendingIntent.getBroadcast(context, requestCode, intent, 0)
     }
@@ -303,16 +243,22 @@ class QuietTimeAlarmManager(val context: Context) {
         val intent = Intent(context, QuietTimeAlarmReceiver::class.java)
 
         if (!isEndTimeRequest)
-            intent.putExtra(SILENT_MODE, true)
+            intent.putExtra(QuietTimeConstants.SILENT_MODE, true)
         else
-            intent.putExtra(SILENT_MODE, false)
+            intent.putExtra(QuietTimeConstants.SILENT_MODE, false)
 
         intent.putExtra(QuietTimeConstants.ID_COLUMN, quietTime.id)
         intent.putExtra(QuietTimeConstants.TITLE_COLUMN, quietTime.title)
         intent.putExtra(QuietTimeConstants.START_TIME_COLUMN, quietTime.startTime)
         intent.putExtra(QuietTimeConstants.END_TIME_COLUMN, quietTime.endTime)
         intent.putExtra(QuietTimeConstants.DAYS_COLUMN, quietTime.days)
+        intent.putExtra(QuietTimeConstants.SILENCE_MODE_COLUMN, quietTime.silenceMode)
 
-        return PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_NO_CREATE)
+        return PendingIntent.getBroadcast(
+            context,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 }

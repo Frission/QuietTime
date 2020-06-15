@@ -1,8 +1,13 @@
 package com.firatyildiz.quiettime.app
 
 import android.app.AlertDialog
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.TransitionDrawable
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
 import android.view.*
@@ -19,6 +24,7 @@ import com.firatyildiz.quiettime.fragments.AddEditFragment
 import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
+import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
 import java.util.*
 
@@ -48,6 +54,8 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     private var tempDays: Int = 0
 
     private var currentDialog: AlertDialog? = null
+    private var hasDoNotDisturbPermission = true
+    private lateinit var mainView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +86,12 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mainView = view
+
+        hasDoNotDisturbPermission = true
+        // check if we have permission
+        checkDoNotDisturbPermission(view)
+
         recyclerView = view.findViewById<RecyclerView>(R.id.quiet_time_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -98,12 +112,33 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
             else
                 noQuietTimesText.visibility = View.GONE
         })
+
+        if (!hasDoNotDisturbPermission) {
+            recyclerView.visibility = View.GONE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        checkDoNotDisturbPermission(mainView)
+
+        if (hasDoNotDisturbPermission) {
+            recyclerView.visibility = View.VISIBLE
+            requireActivity().invalidateOptionsMenu()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         Timber.d("Creating main fragment options menu")
         inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        menu.getItem(0).isEnabled = hasDoNotDisturbPermission
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -194,6 +229,8 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
 
     override fun onDaySelected(indexOfDay: Int) {
         tempDays = tempDays xor (1 shl indexOfDay)
+
+        currentQuietTimeViewHolder!!.saveButton.isEnabled = tempDays != 0
     }
 
     override fun onEditAllButtonClicked() {
@@ -301,6 +338,28 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
 
                 saveQuietTimeDetails()
             }
+        }
+    }
+
+    private fun checkDoNotDisturbPermission(view: View) {
+        val notificationManager =
+            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !notificationManager.isNotificationPolicyAccessGranted) {
+            Snackbar.make(
+                view,
+                getString(R.string.notification_permission),
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .setAction(R.string.grant_permission) {
+                    startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                }
+                .show()
+
+            hasDoNotDisturbPermission = false
+            requireActivity().invalidateOptionsMenu()
+        } else {
+            hasDoNotDisturbPermission = true
         }
     }
 

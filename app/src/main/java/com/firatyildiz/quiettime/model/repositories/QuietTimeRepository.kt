@@ -11,8 +11,8 @@ class QuietTimeRepository(private val quietTimeDao: QuietTimeDao) {
 
     val allQuietTimes: LiveData<List<QuietTime>> = quietTimeDao.getAllQuietTimes()
 
-    fun insertQuietTime(quietTime: QuietTime) {
-        quietTimeDao.insertQuietTime(quietTime)
+    fun insertQuietTime(quietTime: QuietTime): Long? {
+        return quietTimeDao.insertQuietTime(quietTime)
     }
 
     fun updateQuietTime(quietTime: QuietTime) {

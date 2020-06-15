@@ -54,7 +54,7 @@ interface QuietTimeDao {
     fun deleteQuietTimeById(id: Int)
 
     @Insert
-    fun insertQuietTime(quietTime: QuietTime)
+    fun insertQuietTime(quietTime: QuietTime): Long?
 
     @Delete
     fun deleteQuietTime(quietTime: QuietTime)

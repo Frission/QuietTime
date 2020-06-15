@@ -28,24 +28,27 @@ class QuietTimeViewModel(application: Application) : AndroidViewModel(applicatio
         alarmManager = QuietTimeAlarmManager(application)
     }
 
-    // TODO this insert function should also create a repeating alarm
     fun insertQuietTime(quietTime: QuietTime, currentLocale: Locale) {
-        //alarmManager.createAlarmsForQuietTime(quietTime, currentLocale)
-        repository.insertQuietTime(quietTime)
+        val id = repository.insertQuietTime(quietTime)
+
+        if (id != null) {
+            quietTime.id = id.toInt()
+            alarmManager.createAlarmsForQuietTime(quietTime, currentLocale)
+        }
     }
 
     fun updateQuietTime(quietTime: QuietTime, currentLocale: Locale) {
-        //val oldQuietTime = repository.getQuietTimeById(quietTime.id)
+        val oldQuietTime = repository.getQuietTimeById(quietTime.id)
 
-        //oldQuietTime?.let { alarmManager.deleteAlarmsForQuietTime(it) }
+        oldQuietTime?.let { alarmManager.deleteAlarmsForQuietTime(it) }
 
         repository.updateQuietTime(quietTime)
 
-        //alarmManager.createAlarmsForQuietTime(quietTime, currentLocale)
+        alarmManager.createAlarmsForQuietTime(quietTime, currentLocale)
     }
 
     fun deleteQuietTime(quietTime: QuietTime) {
-        //alarmManager.deleteAlarmsForQuietTime(quietTime)
+        alarmManager.deleteAlarmsForQuietTime(quietTime)
         repository.deleteQuietTime(quietTime)
     }
 

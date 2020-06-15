@@ -40,6 +40,14 @@
     <string name="collision_dialog_start">This quiet time collides with the following quiet times:</string>
     <string name="collision_dialog_end">Your phone might go out of silent mode unexpectedly. Are you sure you want to save it as it is?</string>
 
+    <!--  Notification  -->
+    <string name="notification_channel_name">Quiet Times</string>
+    <string name="notification_channel_description">Show a notification when a quiet time starts or ends</string>
+    <string name="notification_title">Quiet Time for %s</string>
+    <string name="notification_text_silent">Your phone will now stay quiet.</string>
+    <string name="notification_text_not_silent">Your phone is no longer quiet.</string>
+    <string name="notification_permission">This app needs do not disturb permissions.</string>
+
     <!--  Generic  -->
     <string name="save">Save</string>
     <string name="done">Done</string>
@@ -52,5 +60,6 @@
     <string name="no">No</string>
     <string name="mute">Mute</string>
     <string name="vibrate">Vibrate</string>
+    <string name="grant_permission">Grant Permission</string>
 
 </resources>

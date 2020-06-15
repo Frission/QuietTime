@@ -151,7 +151,8 @@ object DateTimeLocalizationHelper {
 
     /**
      * Sets the calendar to the start or end time of this quiet time inside the current week of the calendar.
-     * The date will change depending on locale.
+     * The date will change depending on locale. The date will be set to the next week if dayIndex is in the past.
+     * ex. setting date to Wednesday when today is Saturday
      *
      * @param calendar Calendar that is set to today
      * @param dayIndex Index of the day of the week. First day of the weeks is 0.
@@ -163,11 +164,7 @@ object DateTimeLocalizationHelper {
         setToStartTime: Boolean
     ) {
 
-        calendar.set(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
+        val todayTimeInMillis = calendar.timeInMillis
 
         calendar.apply {
             if (setToStartTime) {
@@ -181,6 +178,9 @@ object DateTimeLocalizationHelper {
         }
 
         calendar.set(Calendar.DAY_OF_WEEK, dayIndex + calendar.firstDayOfWeek)
+
+        if (calendar.timeInMillis < todayTimeInMillis)
+            calendar.add(Calendar.DAY_OF_MONTH, 7)
     }
 }
 
