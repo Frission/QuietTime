@@ -22,7 +22,8 @@ data class QuietTime(
     @ColumnInfo(name = QuietTimeConstants.TITLE_COLUMN) var title: String,
     @ColumnInfo(name = QuietTimeConstants.DAYS_COLUMN) var days: Int,
     @ColumnInfo(name = QuietTimeConstants.START_TIME_COLUMN) var startTime: Int,
-    @ColumnInfo(name = QuietTimeConstants.END_TIME_COLUMN) var endTime: Int
+    @ColumnInfo(name = QuietTimeConstants.END_TIME_COLUMN) var endTime: Int,
+    @ColumnInfo(name = QuietTimeConstants.SILENCE_MODE_COLUMN) var silenceMode: Int
 ) : Serializable {
     @ColumnInfo(name = QuietTimeConstants.ID_COLUMN)
     @PrimaryKey(autoGenerate = true)

@@ -5,10 +5,7 @@ import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.TimePicker
+import android.widget.*
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.ViewModelProvider
 import com.firatyildiz.quiettime.R
@@ -16,6 +13,7 @@ import com.firatyildiz.quiettime.app.AppDialog
 import com.firatyildiz.quiettime.app.BaseFragment
 import com.firatyildiz.quiettime.app.OnFragmentNavigationListener
 import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
+import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import com.firatyildiz.quiettime.model.viewmodel.QuietTimeViewModel
 import timber.log.Timber
@@ -54,11 +52,14 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
     private lateinit var endTimeLabel: TextView
     private lateinit var titleEditText: EditText
     private lateinit var timePicker: TimePicker
+    private lateinit var vibrateButton: RadioButton
+    private lateinit var muteButton: RadioButton
     private var dayChoices: List<CheckBox> = emptyList()
 
     private var startTime = 12 * 60
     private var endTime = 12 * 60
     private var days = 0
+    private var silenceMode = QuietTimeConstants.VIBRATE
 
     private var titleEdited = false
     private var daysEdited = false
@@ -111,6 +112,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         outState.putInt("startTime", startTime)
         outState.putInt("endTime", endTime)
         outState.putInt("days", days)
+        outState.putInt("silenceMode", silenceMode)
         outState.putBoolean("titleEdited", titleEdited)
         outState.putBoolean("daysEdited", daysEdited)
         outState.putBoolean("endTimeEdited", endTimeEdited)
@@ -133,6 +135,8 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             view.findViewById(R.id.edit_day6),
             view.findViewById(R.id.edit_day7)
         )
+        vibrateButton = view.findViewById(R.id.edit_vibrate_button)
+        muteButton = view.findViewById(R.id.edit_mute_button)
 
         val weekDayStringIds = DateTimeLocalizationHelper.getWeekStringIds(currentLocale)
 
@@ -144,6 +148,8 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         titleEditText.setOnEditorActionListener(this)
         startTimeLabel.setOnClickListener(this)
         endTimeLabel.setOnClickListener(this)
+        vibrateButton.setOnClickListener(this)
+        muteButton.setOnClickListener(this)
         timePicker.setOnTimeChangedListener(this)
         timePicker.setIs24HourView(true)
 
@@ -151,6 +157,7 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             startTime = savedInstanceState.getInt("startTime", 12 * 60)
             endTime = savedInstanceState.getInt("endTime", 12 * 60)
             days = savedInstanceState.getInt("days", 0)
+            silenceMode = savedInstanceState.getInt("silenceMode", QuietTimeConstants.VIBRATE)
             titleEdited = savedInstanceState.getBoolean("titleEdited", false)
             daysEdited = savedInstanceState.getBoolean("daysEdited", false)
             endTimeEdited = savedInstanceState.getBoolean("endTimeEdited", false)
@@ -161,13 +168,17 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             days = quietTime!!.days
             startTime = quietTime!!.startTime
             endTime = quietTime!!.endTime
+            silenceMode = quietTime!!.silenceMode
 
             titleEditText.setText(quietTime!!.title)
             setTimePicker(quietTime!!.startTime)
 
             for (i in 0..6)
-                dayChoices!![i].isChecked = days and (1 shl i) != 0
+                dayChoices[i].isChecked = days and (1 shl i) != 0
 
+            vibrateButton.isChecked = silenceMode == QuietTimeConstants.VIBRATE
+            muteButton.isChecked = !vibrateButton.isChecked
+            Timber.d("silence mode is ${if (silenceMode == QuietTimeConstants.VIBRATE) "vibrate" else "mute"}")
         } else {
             setTimePicker(12 * 60)
         }
@@ -253,12 +264,14 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
             quietTime!!.days = days
             quietTime!!.startTime = startTime
             quietTime!!.endTime = endTime
+            quietTime!!.silenceMode = silenceMode
 
             viewModel.updateQuietTime(quietTime!!, currentLocale)
         } else {
             Timber.d("inserting quiet time ${titleEditText.text}")
 
-            val quietTime = QuietTime(titleEditText.text.toString(), days, startTime, endTime)
+            val quietTime =
+                QuietTime(titleEditText.text.toString(), days, startTime, endTime, silenceMode)
             viewModel.insertQuietTime(quietTime, currentLocale)
         }
         // finally navigate back after updating or inserting the quiet time
@@ -312,6 +325,8 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
                 R.id.edit_day5 -> setDayChoice(4)
                 R.id.edit_day6 -> setDayChoice(5)
                 R.id.edit_day7 -> setDayChoice(6)
+                R.id.edit_vibrate_button -> silenceMode = QuietTimeConstants.VIBRATE
+                R.id.edit_mute_button -> silenceMode = QuietTimeConstants.MUTE
             }
         }
     }

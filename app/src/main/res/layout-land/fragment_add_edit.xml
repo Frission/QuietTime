@@ -115,8 +115,6 @@
         android:id="@+id/start_time_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/tab_button_transition"
         android:padding="7dp"
@@ -124,12 +122,14 @@
         android:paddingEnd="18dp"
         android:paddingBottom="10dp"
         android:text="@string/qt_item_start_time"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/end_time_label"
         app:layout_constraintEnd_toStartOf="@+id/edit_time_picker"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_days" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_days"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TimePicker
         android:id="@+id/edit_time_picker"
@@ -138,20 +138,17 @@
         android:descendantFocusability="blocksDescendants"
         android:timePickerMode="spinner"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/end_time_label"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="5"
-        app:layout_constraintStart_toEndOf="@+id/start_time_label"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_days"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/end_time_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/tab_button_transition"
         android:padding="7dp"
         android:paddingStart="18dp"
@@ -159,10 +156,37 @@
         android:paddingBottom="10dp"
         android:text="@string/qt_item_end_time"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/edit_time_picker"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
+
+    <RadioGroup
+        android:id="@+id/edit_silence_mode_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/edit_time_picker"
-        app:layout_constraintTop_toBottomOf="@+id/edit_days" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_days">
+
+        <RadioButton
+            android:id="@+id/edit_vibrate_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:checked="true"
+            android:text="@string/vibrate" />
+
+        <RadioButton
+            android:id="@+id/edit_mute_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/mute" />
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

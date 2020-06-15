@@ -4,7 +4,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.firatyildiz.quiettime.helpers.DateTimeLocalizationHelper
+import com.firatyildiz.quiettime.model.QuietTimeConstants
 import com.firatyildiz.quiettime.model.entities.QuietTime
 import timber.log.Timber
 import java.util.*
@@ -50,12 +52,19 @@ class QuietTimeAlarmManager(val context: Context) {
                         i,
                         true
                     )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY * 7,
-                        pendingIntent
-                    )
+
+                    if (Build.VERSION.SDK_INT >= 23)
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
+                    else
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
                 }
             }
 
@@ -75,12 +84,19 @@ class QuietTimeAlarmManager(val context: Context) {
                         i,
                         true
                     )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY * 7,
-                        pendingIntent
-                    )
+
+                    if (Build.VERSION.SDK_INT >= 23)
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
+                    else
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
 
                     calendar.apply { this.timeInMillis = timeInMillis }
 
@@ -91,12 +107,19 @@ class QuietTimeAlarmManager(val context: Context) {
                         i,
                         false
                     )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY * 7,
-                        pendingIntent
-                    )
+
+                    if (Build.VERSION.SDK_INT >= 23)
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
+                    else
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
                 }
             }
 
@@ -116,12 +139,19 @@ class QuietTimeAlarmManager(val context: Context) {
                         i,
                         true
                     )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY * 7,
-                        pendingIntent
-                    )
+
+                    if (Build.VERSION.SDK_INT >= 23)
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
+                    else
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
 
                     calendar.apply { this.timeInMillis = timeInMillis }
 
@@ -139,12 +169,18 @@ class QuietTimeAlarmManager(val context: Context) {
                     // calendar was set to the start of the week, add 7 days
                     calendar.add(Calendar.DAY_OF_MONTH, 7)
 
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY * 7,
-                        pendingIntent
-                    )
+                    if (Build.VERSION.SDK_INT >= 23)
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
+                    else
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.timeInMillis,
+                            pendingIntent
+                        )
                 }
             }
         }
@@ -246,6 +282,12 @@ class QuietTimeAlarmManager(val context: Context) {
         else
             intent.putExtra(SILENT_MODE, false)
 
+        intent.putExtra(QuietTimeConstants.ID_COLUMN, quietTime.id)
+        intent.putExtra(QuietTimeConstants.TITLE_COLUMN, quietTime.title)
+        intent.putExtra(QuietTimeConstants.START_TIME_COLUMN, quietTime.startTime)
+        intent.putExtra(QuietTimeConstants.END_TIME_COLUMN, quietTime.endTime)
+        intent.putExtra(QuietTimeConstants.DAYS_COLUMN, quietTime.days)
+
         return PendingIntent.getBroadcast(context, requestCode, intent, 0)
     }
 
@@ -264,6 +306,12 @@ class QuietTimeAlarmManager(val context: Context) {
             intent.putExtra(SILENT_MODE, true)
         else
             intent.putExtra(SILENT_MODE, false)
+
+        intent.putExtra(QuietTimeConstants.ID_COLUMN, quietTime.id)
+        intent.putExtra(QuietTimeConstants.TITLE_COLUMN, quietTime.title)
+        intent.putExtra(QuietTimeConstants.START_TIME_COLUMN, quietTime.startTime)
+        intent.putExtra(QuietTimeConstants.END_TIME_COLUMN, quietTime.endTime)
+        intent.putExtra(QuietTimeConstants.DAYS_COLUMN, quietTime.days)
 
         return PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_NO_CREATE)
     }

@@ -50,5 +50,7 @@
     <string name="delete">Delete</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="mute">Mute</string>
+    <string name="vibrate">Vibrate</string>
 
 </resources>
