@@ -67,7 +67,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     Timber.d(
                         "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
                             Calendar.DAY_OF_MONTH
-                        )}"
+                        )} ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                     )
                 }
             }
@@ -92,7 +92,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     Timber.d(
                         "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
                             Calendar.DAY_OF_MONTH
-                        )}"
+                        )} ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                     )
 
                     // end alarm
@@ -109,8 +109,9 @@ class QuietTimeAlarmManager(val context: Context) {
                     Timber.d(
                         "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
                             Calendar.DAY_OF_MONTH
-                        )}"
+                        )} ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                     )
+
                 }
             }
 
@@ -135,7 +136,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     Timber.d(
                         "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
                             Calendar.DAY_OF_MONTH
-                        )}"
+                        )} ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                     )
 
                     // the end time is in the next day
@@ -155,7 +156,7 @@ class QuietTimeAlarmManager(val context: Context) {
                     Timber.d(
                         "new alarm scheduled to ${calendar.get(Calendar.MONTH)}/${calendar.get(
                             Calendar.DAY_OF_MONTH
-                        )}"
+                        )} ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                     )
                 }
             }
@@ -281,7 +282,6 @@ class QuietTimeAlarmManager(val context: Context) {
     /**
      * Creates a pending intent ready to be scheduled as an alarm for that day of the week.
      *
-     * @param scheduleForNextWeek If this is true, the alarm will start firing from the next week, on the set day of week
      * @param dayIndex The index of the day of the week. First day of the week is 0.
      */
     fun createQuietTimePendingIntent(

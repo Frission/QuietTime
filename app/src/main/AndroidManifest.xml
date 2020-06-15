@@ -15,6 +15,7 @@
 
         <!--android:process=":remote"-->
         <receiver
+            android:process=":remote"
             android:enabled="true"
             android:exported="true"
             android:name="com.firatyildiz.quiettime.app.QuietTimeAlarmReceiver" />
