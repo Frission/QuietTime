@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -106,6 +107,7 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         viewModel.allQuietTimes.observe(viewLifecycleOwner, Observer {
             Timber.d("live data callback")
             adapter.updateQuietTimes(it)
+            viewModel.updateAlarms(it, currentLocale, lifecycleScope)
 
             if (it.isEmpty())
                 noQuietTimesText.visibility = View.VISIBLE

@@ -154,7 +154,7 @@ object DateTimeLocalizationHelper {
      * The date will change depending on locale. The date will be set to the next week if dayIndex is in the past.
      * ex. setting date to Wednesday when today is Saturday
      *
-     * @param calendar Calendar that is set to today
+     * @param calendar Calendar that is set to current time in millis
      * @param dayIndex Index of the day of the week. First day of the weeks is 0.
      */
     fun setCalendarDateToQuietTime(
@@ -183,49 +183,3 @@ object DateTimeLocalizationHelper {
             calendar.add(Calendar.DAY_OF_MONTH, 7)
     }
 }
-
-//val usCalendar = GregorianCalendar.getInstance(Locale.US)
-//
-//usCalendar.set(
-//calendar.get(Calendar.YEAR),
-//calendar.get(Calendar.MONTH),
-//calendar.get(Calendar.DAY_OF_MONTH)
-//)
-//
-//usCalendar.apply {
-//    if(setToStartTime) {
-//        set(Calendar.HOUR_OF_DAY, quietTime.startTime / 60)
-//        set(Calendar.MINUTE, quietTime.startTime % 60)
-//    } else {
-//        set(Calendar.HOUR_OF_DAY, quietTime.endTime / 60)
-//        set(Calendar.MINUTE, quietTime.endTime % 60)
-//    }
-//    set(Calendar.SECOND, 0)
-//}
-//
-//val currentWeekDay = usCalendar.get(Calendar.DAY_OF_WEEK)
-//var weekDayToScheduleTo = 1 + dayIndex
-//
-//
-//// if the day we are setting this alarm to is already past, schedule it to the next week
-//if(currentWeekDay > weekDayToScheduleTo) {
-//    usCalendar.set(Calendar.DAY_OF_WEEK, weekDayToScheduleTo)
-//    usCalendar.add(Calendar.DAY_OF_MONTH, 7)
-//} else {
-//    if(calendar.firstDayOfWeek == Calendar.MONDAY && weekDayToScheduleTo == 8) {
-//        usCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-//        if(currentWeekDay != Calendar.SUNDAY)
-//            usCalendar.add(Calendar.DAY_OF_MONTH, 7)
-//    } else {
-//        usCalendar.set(Calendar.DAY_OF_WEEK, weekDayToScheduleTo)
-//    }
-//}
-//
-//calendar.set(
-//usCalendar.get(Calendar.YEAR),
-//usCalendar.get(Calendar.MONTH),
-//usCalendar.get(Calendar.DAY_OF_MONTH),
-//usCalendar.get(Calendar.HOUR_OF_DAY),
-//usCalendar.get(Calendar.MINUTE),
-//usCalendar.get(Calendar.SECOND)
-//)
