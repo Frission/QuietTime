@@ -29,3 +29,14 @@ Lastly, the app will warn you if any of the quiet times you are trying to schedu
 happens, but unexpected things might occur, for example the phone might go out of silent mode when you do not expect it to.
 
 The app needs do not disturb permissions on Android 6.0 and above, and will ask for them the first time you open it via a snackbar message.
+
+# Used Technologies
+
+On this project I've used:
+
+- Android MVVM Pattern
+- Android Room
+- Timber
+- LiveData
+
+The project also contains unit and instrument tests that were used to test features before using them in the app.
