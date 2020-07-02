@@ -40,7 +40,7 @@
 
     <!--  Dialogs  -->
     <string name="deletion_dialog">Are you sure you want to delete %s?</string>
-    <string name="collision_dialog_start">This quiet time collides with the following quiet times:</string>
+    <string name="collision_dialog_start">This quiet time overlaps with the following quiet times:</string>
     <string name="collision_dialog_end">Your phone might go out of silent mode unexpectedly. Are you sure you want to save it as it is?</string>
 
     <!--  Notification  -->
@@ -49,8 +49,6 @@
     <string name="notification_title">Quiet Time for %s</string>
     <string name="notification_text_silent">Your phone will now stay quiet.</string>
     <string name="notification_text_not_silent">Your phone is no longer quiet.</string>
-    <string name="notification_permission">This app needs do not disturb permissions.</string>
-
     <!--  Generic  -->
     <string name="save">Save</string>
     <string name="done">Done</string>
@@ -69,9 +67,13 @@
 
     <string name="about_title">Quiet Time</string>
     <string name="about_description">
-        &lt;small>&lt;br>v1.0.0&lt;br>Quiet Time by Fırat Yıldız&lt;br>&lt;cite>App Icon courtesy of svgrepo.com&lt;/cite>&lt;/small>
+        &lt;small>&lt;br>v1.0.3&lt;br>Quiet Time by Fırat Yıldız&lt;br>&lt;cite>App Icon courtesy of svgrepo.com&lt;/cite>&lt;/small>
         &lt;br>&lt;br>
         If you like the app, leave a rating on Google Play Store!
     </string>
 
+    <!--  Permission  -->
+    <string name="notification_permission">This app needs do not disturb permissions.</string>
+    <string name="permission_error">Settings for the permission could not be found.</string>
+    <string name="permission_setting_not_found">Do not disturb permission could not be found. App may not work as expected.</string>
 </resources>

@@ -3,6 +3,8 @@ package com.firatyildiz.quiettime.fragments
 
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -146,6 +148,13 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         }
 
         titleEditText.setOnEditorActionListener(this)
+        titleEditText.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                validateTitle()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
         startTimeLabel.setOnClickListener(this)
         endTimeLabel.setOnClickListener(this)
         vibrateButton.setOnClickListener(this)
@@ -353,12 +362,14 @@ class AddEditFragment : BaseFragment(), View.OnClickListener, TextView.OnEditorA
         if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEND) {
             Timber.d("clearing focus from text")
             titleEditText.clearFocus()
-
-            titleEdited = titleEditText.text.isNotEmpty()
-
-            requireActivity().invalidateOptionsMenu()
+            validateTitle()
         }
         return false
+    }
+
+    private fun validateTitle() {
+        titleEdited = titleEditText.text.isNotEmpty()
+        requireActivity().invalidateOptionsMenu()
     }
 
     private fun setTimePicker(timeInMinutes: Int) {

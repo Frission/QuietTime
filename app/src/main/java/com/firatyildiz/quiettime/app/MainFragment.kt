@@ -90,12 +90,13 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         super.onViewCreated(view, savedInstanceState)
 
         mainView = view
+        noQuietTimesText = view.findViewById(R.id.no_quiet_times_text)
 
         hasDoNotDisturbPermission = true
         // check if we have permission
         checkDoNotDisturbPermission(view)
 
-        recyclerView = view.findViewById<RecyclerView>(R.id.quiet_time_list)
+        recyclerView = view.findViewById(R.id.quiet_time_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = QuietTimeRecyclerAdapter(requireContext(), dayNames, currentLocale, this)
@@ -103,8 +104,6 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
-
-        noQuietTimesText = view.findViewById(R.id.no_quiet_times_text)
 
         viewModel.allQuietTimes.observe(viewLifecycleOwner, Observer {
             Timber.d("live data callback")
@@ -354,6 +353,22 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
         val notificationManager =
             requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        val packageManager = activity?.packageManager
+
+        packageManager?.let {
+            if (Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).resolveActivity(it) == null) {
+                // there's no settings intent on this device that can handle this permission
+                // so just grant it i suppose
+                hasDoNotDisturbPermission = true
+                requireActivity().invalidateOptionsMenu()
+                Snackbar.make(
+                    view,
+                    getString(R.string.permission_setting_not_found),
+                    Snackbar.LENGTH_LONG
+                )
+            }
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !notificationManager.isNotificationPolicyAccessGranted) {
             Snackbar.make(
                 view,
@@ -361,7 +376,18 @@ class MainFragment : BaseFragment(), QuietTimeRecyclerAdapter.QuietTimeItemViewC
                 Snackbar.LENGTH_INDEFINITE
             )
                 .setAction(R.string.grant_permission) {
-                    startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                    try {
+                        startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                    } catch (ex: Exception) {
+                        // there was no notification policy access setting? then we do not need it
+                        hasDoNotDisturbPermission = true
+                        requireActivity().invalidateOptionsMenu()
+                        Snackbar.make(
+                            view,
+                            getString(R.string.permission_setting_not_found),
+                            Snackbar.LENGTH_LONG
+                        )
+                    }
                 }
                 .show()
 
